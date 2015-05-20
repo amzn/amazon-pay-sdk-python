@@ -18,7 +18,7 @@ $ sudo python3 setup.py install
 
 PyPI
 ```
-sudo pip3 install pay_with_amazon
+$ sudo pip3 install pay_with_amazon
 ```
 
 Test it.
