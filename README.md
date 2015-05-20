@@ -300,6 +300,6 @@ Response
 
 ## API Reference
 
-[Official Login and Pay with Amazon API Reference](http://docs.developer.amazonservices.com/en_US/off_amazon_payments/OffAmazonPayments_Overview.html) 
+[Official Login and Pay with Amazon API Reference](https://payments.amazon.com/documentation) 
 
 
