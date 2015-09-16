@@ -1,3 +1,6 @@
+from future.standard_library import install_aliases
+install_aliases()
+
 import os
 import unittest
 from pay_with_amazon.ipn_handler import IpnHandler
@@ -68,3 +71,7 @@ class IpnHandlerTest(unittest.TestCase):
                 headers=self.headers)
             ipn_handler._pem = self.pem
             ipn_handler._validate_signature()
+
+
+if __name__ == "__main__":
+    unittest.main()

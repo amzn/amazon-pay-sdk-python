@@ -3,7 +3,7 @@ import sys
 import json
 import unittest
 import xml.etree.ElementTree as et
-from unittest.mock import Mock, patch
+from mock import Mock, patch
 from pay_with_amazon.client import PayWithAmazonClient
 from pay_with_amazon.payment_request import PaymentRequest
 from pay_with_amazon.payment_response import PaymentResponse, PaymentErrorResponse

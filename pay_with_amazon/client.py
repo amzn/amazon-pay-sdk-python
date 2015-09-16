@@ -6,7 +6,7 @@ import pay_with_amazon.version as pwa_version
 from pay_with_amazon.payment_request import PaymentRequest
 
 
-class PayWithAmazonClient:
+class PayWithAmazonClient(object):
 
     """This client allows you to make all the necessary API calls to
         integrate with Login and Pay with Amazon.

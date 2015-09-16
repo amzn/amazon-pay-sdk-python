@@ -2,7 +2,7 @@ import requests
 import pay_with_amazon.lwa_region as lwa_region
 
 
-class LoginWithAmazon:
+class LoginWithAmazon(object):
 
     """Login with Amazon class to wrap the get login profile method"""
 

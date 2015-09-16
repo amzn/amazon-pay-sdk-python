@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, patch
+from mock import Mock, patch
 from pay_with_amazon.login_with_amazon import LoginWithAmazon
 
 
@@ -50,8 +50,11 @@ class LoginWithAmazonClientTest(unittest.TestCase):
         mock_urlopen.side_effect = self.mock_get_success
         res = self.lwa_client.get_login_profile(
             access_token='access_token')
-        print(res)
 
     def test_invalid_region(self):
         with self.assertRaises(KeyError):
             LoginWithAmazon(client_id='test', region='xx', sandbox=True)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,3 +1,6 @@
+from future.standard_library import install_aliases
+install_aliases()
+
 import hmac
 import time
 import base64
@@ -9,7 +12,7 @@ from collections import OrderedDict
 from pay_with_amazon.payment_response import PaymentResponse, PaymentErrorResponse
 
 
-class PaymentRequest:
+class PaymentRequest(object):
 
     """Parses request, generates signature and parameter string, posts
     request to Amazon, and returns result.
@@ -102,7 +105,7 @@ class PaymentRequest:
         parameters['Signature'] = self._sign(string_to_sign)
 
         ordered_parameters = OrderedDict(sorted(parameters.items()))
-        ordered_parameters.move_to_end('Signature')
+        ordered_parameters['Signature'] = ordered_parameters.pop('Signature')
         return parse.urlencode(ordered_parameters).encode(encoding='utf_8')
 
     def _request(self, retry_time):

@@ -4,7 +4,7 @@ import xml.etree.ElementTree as et
 from collections import defaultdict
 
 
-class PaymentResponse:
+class PaymentResponse(object):
 
     """Base class for all OffAmazonPayments responses
 
