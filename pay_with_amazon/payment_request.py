@@ -95,7 +95,7 @@ class PaymentRequest(object):
         parameters.update({k: v for (k, v) in params.items()})
         parse_results = parse.urlparse(self._mws_endpoint)
 
-        string_to_sign = "POST\n{}\n{}\n{}".format(
+        string_to_sign = "POST\n{0}\n{1}\n{2}".format(
             parse_results[1],
             parse_results[2],
             parse.urlencode(
@@ -127,7 +127,7 @@ class PaymentRequest(object):
               503) and self.handle_throttle:
             self._should_throttle = True
             self.response = PaymentErrorResponse(
-                '<error>{}</error>'.format(r.status_code))
+                '<error>{0}</error>'.format(r.status_code))
         else:
             self.response = PaymentErrorResponse(r.text)
 

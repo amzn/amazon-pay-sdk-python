@@ -7,7 +7,7 @@ from urllib.error import HTTPError
 from pay_with_amazon.payment_response import PaymentResponse
 
 
-class IpnHandler():
+class IpnHandler(object):
 
     """Instant Payment Notifications (IPN) can be used to monitor the state
     transition of payment objects.
@@ -119,7 +119,7 @@ class IpnHandler():
         except HTTPError as ex:
             self.error = 'Error retrieving certificate.'
             raise ValueError(
-                'Error retrieving certificate. {}'.format(
+                'Error retrieving certificate. {0}'.format(
                     ex.reason))
 
         self._pem = str(cert_req.read(), encoding='utf-8')
@@ -127,7 +127,7 @@ class IpnHandler():
 
     def _validate_signature(self):
         """Generate signing string and validate signature"""
-        signing_string = '{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n'.format(
+        signing_string = '{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n{6}\n{7}\n{8}\n{9}\n'.format(
             'Message',
             self._message_encoded,
             'MessageId',

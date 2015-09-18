@@ -75,7 +75,7 @@ class PayWithAmazonClient(object):
                 try:
                     setattr(self, param, os.environ[env_param_map[param]])
                 except:
-                    raise ValueError('Invalid {}.'.format(param))
+                    raise ValueError('Invalid {0}.'.format(param))
             else:
                 setattr(self, param, eval(param))
 
@@ -84,7 +84,7 @@ class PayWithAmazonClient(object):
             # used for Login with Amazon helper
             self._region_code = self.region
         except KeyError:
-            raise KeyError('Invalid region code ({})'.format(self.region))
+            raise KeyError('Invalid region code ({0})'.format(self.region))
 
         self.mws_access_key = self.mws_access_key
         self.mws_secret_key = self.mws_secret_key
@@ -111,7 +111,7 @@ class PayWithAmazonClient(object):
             application['ApplicationVersion'] = application_version
 
         self._user_agent = '; '.join(
-            '{}={}'.format(
+            '{0}={1}'.format(
                 k,
                 v) for (
                 k,
@@ -136,11 +136,11 @@ class PayWithAmazonClient(object):
         """Set endpoint for API calls"""
         if self._sandbox:
             self._mws_endpoint = \
-                'https://{}/OffAmazonPayments_Sandbox/{}'.format(
+                'https://{0}/OffAmazonPayments_Sandbox/{1}'.format(
                     self._region, self._api_version)
         else:
             self._mws_endpoint = \
-                'https://{}/OffAmazonPayments/{}'.format(
+                'https://{0}/OffAmazonPayments/{1}'.format(
                     self._region, self._api_version)
 
     def get_login_profile(self, access_token, client_id):

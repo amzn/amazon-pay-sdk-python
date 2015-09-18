@@ -47,12 +47,12 @@ class PaymentResponse(object):
         'RequestID' with capital 'ID'. 'na' endpoint returns 'RequestId'
         """
         try:
-            if self._root.find('.//{}RequestId'.format(self._ns)) is None:
+            if self._root.find('.//{0}RequestId'.format(self._ns)) is None:
                 self.request_id = self._root.find(
-                    './/{}RequestID'.format(self._ns)).text
+                    './/{0}RequestID'.format(self._ns)).text
             else:
                 self.request_id = self._root.find(
-                    './/{}RequestId'.format(self._ns)).text
+                    './/{0}RequestId'.format(self._ns)).text
         except:
             self.request_id = None
 
