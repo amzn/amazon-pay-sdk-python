@@ -92,7 +92,7 @@ class PaymentRequest(object):
         if 'SellerId' not in params:
             parameters['SellerId'] = self.merchant_id
 
-        parameters.update({k: v for (k, v) in params.items()})
+        parameters.update(dict((k, v) for k, v in params.items()))
         parse_results = parse.urlparse(self._mws_endpoint)
 
         string_to_sign = "POST\n{0}\n{1}\n{2}".format(
