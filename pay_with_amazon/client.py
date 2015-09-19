@@ -111,12 +111,8 @@ class PayWithAmazonClient(object):
             application['ApplicationVersion'] = application_version
 
         self._user_agent = '; '.join(
-            '{0}={1}'.format(
-                k,
-                v) for (
-                k,
-                v) in sorted(
-                application.items()))
+            '{0}={1}'.format(k, v) for (k, v) in sorted(application.items())
+        )
 
         self._headers = {
             'Content-Type': 'application/x-www-form-urlencoded',

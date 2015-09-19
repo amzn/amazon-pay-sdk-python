@@ -82,10 +82,10 @@ class PaymentResponse(object):
             for dc in map(self._etree_to_dict, children):
                 for k, v in dc.items():
                     dd[k].append(v)
-            d = {
-                t.tag.replace(self._ns, ''): {
-                    k: v[0] if len(v) == 1 else v for k,
-                    v in dd.items()}}
+            d = {t.tag.replace(self._ns, ''): dict(
+                (k, v[0] if len(v) == 1 else v)
+                for k, v in dd.items()
+            )}
         if t.attrib:
             d[t.tag.replace(self._ns, '')].update(('@' + k, v)
                                                   for k, v in t.attrib.items())
