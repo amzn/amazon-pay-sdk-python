@@ -8,6 +8,14 @@ Python >= 3.2<br/>
 pyOpenSSL >= 0.11<br/>
 Requests >= 2.6.0<br/>
 
+## Documentation
+
+* The Integration steps can be found [here](https://payments.amazon.com/documentation)
+
+## Sample
+
+* View the sample integration demo [here](https://amzn.github.io/login-and-pay-with-amazon-sdk-samples/)
+
 ## Installation
 
 ```
