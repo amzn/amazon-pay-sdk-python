@@ -111,7 +111,7 @@ class PaymentRequest(object):
 
         ordered_parameters = OrderedDict(sorted(parameters.items()))
         ordered_parameters['Signature'] = ordered_parameters.pop('Signature')
-        return urlencode(ordered_parameters).encode(encoding='utf_8')
+        return urlencode(ordered_parameters).encode('utf_8')
 
     def _request(self, retry_time):
         time.sleep(retry_time)
