@@ -775,9 +775,9 @@ class PayWithAmazonClient(object):
             funds prior to fulfilling the order. Default: False
 
         soft_descriptor : string, optional
-            The description to be shown on the buyer’s payment instrument
+            The description to be shown on the buyer's payment instrument
             statement if CaptureNow is set to true. The soft descriptor sent to
-            the payment processor is: “AMZ* <soft descriptor specified here>”.
+            the payment processor is: "AMZ* <soft descriptor specified here>".
 
         merchant_id : string, required
             Your merchant ID. If you are a marketplace enter the seller's merchant
@@ -863,9 +863,9 @@ class PayWithAmazonClient(object):
             emails to the buyer. Maximum: 255 characters, Default: None
 
         soft_descriptor : string, optional
-            The description to be shown on the buyer’s payment instrument
+            The description to be shown on the buyer's payment instrument
             statement. The soft descriptor sent to the payment processor is:
-            “AMZ* <soft descriptor specified here>”.
+            "AMZ* <soft descriptor specified here>".
 
         merchant_id : string, required
             Your merchant ID. If you are a marketplace enter the seller's merchant
@@ -987,9 +987,9 @@ class PayWithAmazonClient(object):
             buyer. Maximum: 255 characters, Default: None
 
         soft_descriptor : string, optional
-            The description to be shown on the buyer’s payment instrument
+            The description to be shown on the buyer's payment instrument
             statement. The soft descriptor sent to the payment processor is:
-            “AMZ* <soft descriptor specified here>”.
+            "AMZ* <soft descriptor specified here>".
 
         merchant_id : string, required
             Your merchant ID. If you are a marketplace enter the seller's merchant
@@ -1107,9 +1107,9 @@ class PayWithAmazonClient(object):
             Your marketplace web service auth token. Default: None
 
         soft_descriptor : string, optional
-            The description to be shown on the buyer’s payment instrument
+            The description to be shown on the buyer's payment instrument
             statement if CaptureNow is set to true. The soft descriptor sent to
-            the payment processor is: “AMZ* <soft descriptor specified here>”.
+            the payment processor is: "AMZ* <soft descriptor specified here>".
         """
 
         if self.is_order_reference_id(amazon_reference_id):
