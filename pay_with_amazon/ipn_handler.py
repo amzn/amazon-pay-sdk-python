@@ -4,6 +4,7 @@ import base64
 from urllib import request
 from OpenSSL import crypto
 from urllib.error import HTTPError
+from urllib.parse import urlparse
 from pay_with_amazon.payment_response import PaymentResponse
 
 
@@ -104,11 +105,20 @@ class IpnHandler():
         """Checks to see if the certificate URL points to a AWS endpoint and
         validates the signature using the .pem from the certificate URL.
         """
+        try:
+            url_object = urlparse(self._signing_cert_url)
+        except:
+            raise ValueError('Invalid signing cert URL.')
+
+        if url_object.scheme != 'https':
+            raise ValueError('Invalid certificate.')
+
         if not re.search(
-                'https\:\/\/sns\.(.*)\.amazonaws\.com(.*)\.pem',
-                self._signing_cert_url):
-            self.error = 'Certificate is not hosted at AWS URL'
-            raise ValueError('Certificate is not hosted at AWS URL')
+                '^sns\.[a-zA-Z0-9\-]{3,}\.amazonaws\.com(\.cn)?$', url_object.netloc):
+            raise ValueError('Invalid certificate.')
+
+        if not re.search('^\/(.*)\.pem$', url_object.path):
+            raise ValueError('Invalid certificate.')
 
         return True
 

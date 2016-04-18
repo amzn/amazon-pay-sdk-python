@@ -6,6 +6,8 @@ __pycache__
 .project
 .pydevproject
 test.py
+.DS_Store
+Config
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
