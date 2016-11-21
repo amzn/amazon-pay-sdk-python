@@ -93,7 +93,7 @@ Authorize
 ret = client.authorize(
     amazon_order_reference_id='AMAZON_ORDER_REFERENCE_ID',
     authorization_reference_id='MY_UNIQUE_AUTHORIZATION_ID',
-    amount='1.00',
+    authorization_amount='1.00',
     seller_authorization_note='Authorization note.',
     transaction_timeout=10,
     capture_now=False)    
