@@ -4,7 +4,7 @@ import xml.etree.ElementTree as et
 from collections import defaultdict
 
 
-class PaymentResponse:
+class PaymentResponse(object):
 
     """Base class for all OffAmazonPayments responses
 
@@ -47,12 +47,12 @@ class PaymentResponse:
         'RequestID' with capital 'ID'. 'na' endpoint returns 'RequestId'
         """
         try:
-            if self._root.find('.//{}RequestId'.format(self._ns)) is None:
+            if self._root.find('.//{0}RequestId'.format(self._ns)) is None:
                 self.request_id = self._root.find(
-                    './/{}RequestID'.format(self._ns)).text
+                    './/{0}RequestID'.format(self._ns)).text
             else:
                 self.request_id = self._root.find(
-                    './/{}RequestId'.format(self._ns)).text
+                    './/{0}RequestId'.format(self._ns)).text
         except:
             self.request_id = None
 
@@ -82,10 +82,10 @@ class PaymentResponse:
             for dc in map(self._etree_to_dict, children):
                 for k, v in dc.items():
                     dd[k].append(v)
-            d = {
-                t.tag.replace(self._ns, ''): {
-                    k: v[0] if len(v) == 1 else v for k,
-                    v in dd.items()}}
+            d = {t.tag.replace(self._ns, ''): dict(
+                (k, v[0] if len(v) == 1 else v)
+                for k, v in dd.items()
+            )}
         if t.attrib:
             d[t.tag.replace(self._ns, '')].update(('@' + k, v)
                                                   for k, v in t.attrib.items())

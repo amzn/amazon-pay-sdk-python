@@ -3,7 +3,7 @@ import sys
 import json
 import unittest
 import xml.etree.ElementTree as et
-from unittest.mock import Mock, patch
+from mock import Mock, patch
 from pay_with_amazon.client import PayWithAmazonClient
 from pay_with_amazon.payment_request import PaymentRequest
 from pay_with_amazon.payment_response import PaymentResponse, PaymentErrorResponse
@@ -18,7 +18,7 @@ class PayWithAmazonClientTest(unittest.TestCase):
         self.merchant_id = 'merchant_id'
         self.service_version = '2013-01-01'
         self.mws_endpoint = \
-            'https://mws.amazonservices.com/OffAmazonPayments_Sandbox/{}'.format(
+            'https://mws.amazonservices.com/OffAmazonPayments_Sandbox/{0}'.format(
                 self.service_version)
 
         self.client = PayWithAmazonClient(
@@ -164,7 +164,7 @@ class PayWithAmazonClientTest(unittest.TestCase):
         mock_urlopen.side_effect = self.mock_requests_post
         self.client.get_service_status()
         header_expected = {
-            'User-Agent': 'Language=Python; MWSClientVersion=2013-01-01; Platform={}'.format(sys.platform),
+            'User-Agent': 'Language=Python; MWSClientVersion=2013-01-01; Platform={0}'.format(sys.platform),
             'Content-Type': 'application/x-www-form-urlencoded'}
         self.assertEqual(mock_urlopen.call_args[1]['headers'], header_expected)
 

@@ -6,7 +6,7 @@ import pay_with_amazon.version as pwa_version
 from pay_with_amazon.payment_request import PaymentRequest
 
 
-class PayWithAmazonClient:
+class PayWithAmazonClient(object):
 
     """This client allows you to make all the necessary API calls to
         integrate with Login and Pay with Amazon.
@@ -75,7 +75,7 @@ class PayWithAmazonClient:
                 try:
                     setattr(self, param, os.environ[env_param_map[param]])
                 except:
-                    raise ValueError('Invalid {}.'.format(param))
+                    raise ValueError('Invalid {0}.'.format(param))
             else:
                 setattr(self, param, eval(param))
 
@@ -84,7 +84,7 @@ class PayWithAmazonClient:
             # used for Login with Amazon helper
             self._region_code = self.region
         except KeyError:
-            raise KeyError('Invalid region code ({})'.format(self.region))
+            raise KeyError('Invalid region code ({0})'.format(self.region))
 
         self.mws_access_key = self.mws_access_key
         self.mws_secret_key = self.mws_secret_key
@@ -111,12 +111,8 @@ class PayWithAmazonClient:
             application['ApplicationVersion'] = application_version
 
         self._user_agent = '; '.join(
-            '{}={}'.format(
-                k,
-                v) for (
-                k,
-                v) in sorted(
-                application.items()))
+            '{0}={1}'.format(k, v) for (k, v) in sorted(application.items())
+        )
 
         self._headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -136,11 +132,11 @@ class PayWithAmazonClient:
         """Set endpoint for API calls"""
         if self._sandbox:
             self._mws_endpoint = \
-                'https://{}/OffAmazonPayments_Sandbox/{}'.format(
+                'https://{0}/OffAmazonPayments_Sandbox/{1}'.format(
                     self._region, self._api_version)
         else:
             self._mws_endpoint = \
-                'https://{}/OffAmazonPayments/{}'.format(
+                'https://{0}/OffAmazonPayments/{1}'.format(
                     self._region, self._api_version)
 
     def get_login_profile(self, access_token, client_id):
@@ -779,9 +775,9 @@ class PayWithAmazonClient:
             funds prior to fulfilling the order. Default: False
 
         soft_descriptor : string, optional
-            The description to be shown on the buyer’s payment instrument
+            The description to be shown on the buyer's payment instrument
             statement if CaptureNow is set to true. The soft descriptor sent to
-            the payment processor is: “AMZ* <soft descriptor specified here>”.
+            the payment processor is: "AMZ* <soft descriptor specified here>".
 
         merchant_id : string, required
             Your merchant ID. If you are a marketplace enter the seller's merchant
@@ -867,9 +863,9 @@ class PayWithAmazonClient:
             emails to the buyer. Maximum: 255 characters, Default: None
 
         soft_descriptor : string, optional
-            The description to be shown on the buyer’s payment instrument
+            The description to be shown on the buyer's payment instrument
             statement. The soft descriptor sent to the payment processor is:
-            “AMZ* <soft descriptor specified here>”.
+            "AMZ* <soft descriptor specified here>".
 
         merchant_id : string, required
             Your merchant ID. If you are a marketplace enter the seller's merchant
@@ -991,9 +987,9 @@ class PayWithAmazonClient:
             buyer. Maximum: 255 characters, Default: None
 
         soft_descriptor : string, optional
-            The description to be shown on the buyer’s payment instrument
+            The description to be shown on the buyer's payment instrument
             statement. The soft descriptor sent to the payment processor is:
-            “AMZ* <soft descriptor specified here>”.
+            "AMZ* <soft descriptor specified here>".
 
         merchant_id : string, required
             Your merchant ID. If you are a marketplace enter the seller's merchant
@@ -1111,9 +1107,9 @@ class PayWithAmazonClient:
             Your marketplace web service auth token. Default: None
 
         soft_descriptor : string, optional
-            The description to be shown on the buyer’s payment instrument
+            The description to be shown on the buyer's payment instrument
             statement if CaptureNow is set to true. The soft descriptor sent to
-            the payment processor is: “AMZ* <soft descriptor specified here>”.
+            the payment processor is: "AMZ* <soft descriptor specified here>".
         """
 
         if self.is_order_reference_id(amazon_reference_id):

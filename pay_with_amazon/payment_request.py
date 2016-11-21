@@ -1,15 +1,23 @@
+try:
+    from urllib.parse import urlparse, urlencode
+except ImportError:     # Python 2
+    from urlparse import urlparse
+    from urllib import urlencode
+
+import base64
+import datetime
+import hashlib
 import hmac
 import time
-import base64
-import hashlib
-import datetime
-import requests
-from urllib import parse
 from collections import OrderedDict
-from pay_with_amazon.payment_response import PaymentResponse, PaymentErrorResponse
+
+import requests
+from pay_with_amazon.payment_response import (
+    PaymentErrorResponse, PaymentResponse
+)
 
 
-class PaymentRequest:
+class PaymentRequest(object):
 
     """Parses request, generates signature and parameter string, posts
     request to Amazon, and returns result.
@@ -89,21 +97,21 @@ class PaymentRequest:
         if 'SellerId' not in params:
             parameters['SellerId'] = self.merchant_id
 
-        parameters.update({k: v for (k, v) in params.items()})
-        parse_results = parse.urlparse(self._mws_endpoint)
+        parameters.update(dict((k, v) for k, v in params.items()))
+        parse_results = urlparse(self._mws_endpoint)
 
-        string_to_sign = "POST\n{}\n{}\n{}".format(
+        string_to_sign = "POST\n{0}\n{1}\n{2}".format(
             parse_results[1],
             parse_results[2],
-            parse.urlencode(
+            urlencode(
                 sorted(parameters.items())).replace(
                     '+', '%20').replace('*', '%2A').replace('%7E', '~'))
 
         parameters['Signature'] = self._sign(string_to_sign)
 
         ordered_parameters = OrderedDict(sorted(parameters.items()))
-        ordered_parameters.move_to_end('Signature')
-        return parse.urlencode(ordered_parameters).encode(encoding='utf_8')
+        ordered_parameters['Signature'] = ordered_parameters.pop('Signature')
+        return urlencode(ordered_parameters).encode('utf_8')
 
     def _request(self, retry_time):
         time.sleep(retry_time)
@@ -124,7 +132,7 @@ class PaymentRequest:
               503) and self.handle_throttle:
             self._should_throttle = True
             self.response = PaymentErrorResponse(
-                '<error>{}</error>'.format(r.status_code))
+                '<error>{0}</error>'.format(r.status_code))
         else:
             self.response = PaymentErrorResponse(r.text)
 

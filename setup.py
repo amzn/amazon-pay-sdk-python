@@ -7,13 +7,14 @@ setup(
     version=pwa_version.versions['application_version'],
     description='Login and Pay with Amazon Python SDK',
     url='https://github.com/amzn/login-and-pay-with-amazon-sdk-python',
-    download_url='https://github.com/amzn/login-and-pay-with-amazon-sdk-python/tarball/{}'.format(
+    download_url='https://github.com/amzn/login-and-pay-with-amazon-sdk-python/tarball/{0}'.format(
         pwa_version.versions['application_version']),
     author='EPS-DSE',
     author_email='pay-with-amazon-sdk@amazon.com',
     license='Apache License version 2.0, January 2004',
     install_requires=['pyOpenSSL >= 0.11',
-                      'requests >= 2.6.0'],
+                      'requests >= 2.6.0',
+                      'mock'],
     keywords=['Amazon', 'Payments', 'Login', 'Python', 'API', 'SDK'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

@@ -2,7 +2,7 @@ import requests
 import pay_with_amazon.lwa_region as lwa_region
 
 
-class LoginWithAmazon:
+class LoginWithAmazon(object):
 
     """Login with Amazon class to wrap the get login profile method"""
 
@@ -24,17 +24,17 @@ class LoginWithAmazon:
         try:
             self.region = lwa_region.regions[region]
         except KeyError:
-            raise KeyError('Invalid region code ({}).'.format(region))
+            raise KeyError('Invalid region code ({0}).'.format(region))
 
         self._sandbox_str = 'api.sandbox' if sandbox else 'api'
-        self._endpoint = 'https://{}.{}'.format(
+        self._endpoint = 'https://{0}.{1}'.format(
             self._sandbox_str,
             self.region)
 
     def get_login_profile(self, access_token):
         """Get profile associated with LWA user."""
         token_info = requests.get(
-            url='{}/auth/o2/tokeninfo'.format(self._endpoint),
+            url='{0}/auth/o2/tokeninfo'.format(self._endpoint),
             headers=None,
             params={'access_token': access_token},
             verify=True)
@@ -51,8 +51,8 @@ class LoginWithAmazon:
             raise ValueError('Invalid client Id.')
 
         profile = requests.get(
-            url='{}/user/profile'.format(self._endpoint),
-            headers={'Authorization': 'bearer {}'.format(access_token)},
+            url='{0}/user/profile'.format(self._endpoint),
+            headers={'Authorization': 'bearer {0}'.format(access_token)},
             params=None,
             verify=True)
 
