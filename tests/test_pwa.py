@@ -89,6 +89,19 @@ class PayWithAmazonClientTest(unittest.TestCase):
         self.assertEqual(
             self.client._mws_endpoint,
             'https://mws.amazonservices.com/OffAmazonPayments_Sandbox/2013-01-01')
+        
+    def test_sanitize_response_data(self):
+        current_file_dir = os.path.dirname(__file__)
+        test_file_path = os.path.join(current_file_dir, "log.txt")
+        f = open(test_file_path, "r")
+        source_text = f.read()
+        f.close()
+        text = self.request._sanitize_response_data(source_text)
+        test_file_path = os.path.join(current_file_dir, "sanlog.txt")
+        f = open(test_file_path, "r")
+        san_text = f.read()
+        f.close
+        self.assertEqual(text, san_text)
 
     def test_region_exception(self):
         with self.assertRaises(KeyError):

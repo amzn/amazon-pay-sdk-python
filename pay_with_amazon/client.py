@@ -1,12 +1,17 @@
 import re
 import os
 import sys
+import logging
 import pay_with_amazon.pwa_region as pwa_region
 import pay_with_amazon.version as pwa_version
 from pay_with_amazon.payment_request import PaymentRequest
+from fileinput import filename
 
 
 class PayWithAmazonClient:
+
+    logger = logging.getLogger('__pay_with_amazon_sdk__')
+    logger.addHandler(logging.NullHandler())
 
     """This client allows you to make all the necessary API calls to
         integrate with Login and Pay with Amazon.
@@ -24,32 +29,45 @@ class PayWithAmazonClient:
             sandbox=False,
             handle_throttle=True,
             application_name=None,
-            application_version=None):
+            application_version=None,
+            log_enabled=False,
+            log_file_name=None,
+            log_level=None):
+    
+    
         """
         Parameters
         ----------
         mws_access_key : string, optional
             Your MWS access key. If no value is passed, check environment.
             Environment variable: PWA_MWS_ACCESS_KEY
+            (mws_access_key must be passed or specified in environment or this
+             will result in an error)
 
         mws_secret_key : string, optional
             Your MWS secret key. If no value is passed, check environment.
             Environment variable: PWA_MWS_SECRET_KEY
+            (mws_secret_key must be passed or specified in environment or this
+             will result in an error)
 
         merchant_id : string, optional
             Your merchant ID. If you are a marketplace enter the seller's merchant
             ID. If no value is passed, check environment.
             Environment variable: PWA_MERCHANT_ID
+            (merchant_id must be passed or specified in environment or this
+             will result in an error)
 
         region : string, optional
             The region in which you are conducting business. If no value is
             passed, check environment.
             Environment variable: PWA_REGION
+            (region must be passed or specified in environment or this
+             will result in an error)
 
         sandbox : string, optional
             Toggle sandbox mode. Default: False.
 
-        currency_code: string, optional
+        currency_code: string, required
             Currency code for your region.
             Environment variable: PWA_CURRENCY_CODE
 
@@ -64,6 +82,15 @@ class PayWithAmazonClient:
         application_version: string, optional
             Your application version. This will get set in the UserAgent.
             Default: None
+
+        log_file_name: string, optional
+            The name of the file for logging
+            Default: None
+
+        log_level: integer, optional
+            The level of logging recorded
+            Default: "None"
+            Levels: "CRITICAL"; "ERROR"; "WARNING"; "INFO"; "DEBUG"; "NOTSET"
         """
         env_param_map = {'mws_access_key': 'PWA_MWS_ACCESS_KEY',
                          'mws_secret_key': 'PWA_MWS_SECRET_KEY',
@@ -101,6 +128,20 @@ class PayWithAmazonClient:
         self._mws_endpoint = None
         self._set_endpoint()
 
+        if log_enabled is not False:
+            numeric_level = getattr(logging, log_level.upper(), None)
+            if numeric_level is not None:
+                if log_file_name is not None:
+                    self.logger.setLevel(numeric_level)
+                    fh = logging.FileHandler(log_file_name)
+                    self.logger.addHandler(fh)
+                    fh.setLevel(numeric_level)
+                else:
+                    self.logger.setLevel(numeric_level)
+                    ch = logging.StreamHandler(sys.stdout)
+                    self.logger.addHandler(ch)
+                    ch.setLevel(numeric_level)
+        
         application = {'Language': 'Python',
                        'Platform': sys.platform,
                        'MWSClientVersion': self._api_version}

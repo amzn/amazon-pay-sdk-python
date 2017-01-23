@@ -1,6 +1,7 @@
 import re
 import json
 import base64
+import logging
 from urllib import request
 from OpenSSL import crypto
 from urllib.error import HTTPError
@@ -9,6 +10,9 @@ from pay_with_amazon.payment_response import PaymentResponse
 
 
 class IpnHandler():
+
+    logger = logging.getLogger('__pay_with_amazon_sdk__')
+    logger.addHandler(logging.NullHandler())
 
     """Instant Payment Notifications (IPN) can be used to monitor the state
     transition of payment objects.
@@ -70,6 +74,8 @@ class IpnHandler():
         self._xml = self._notification_data.replace(
             '<?xml version="1.0" encoding="UTF-8"?>\n',
             '')
+        self.logger.debug('IPN Response: %s', 
+            self._sanitize_response_data(self._xml))
 
     def authenticate(self):
         """Attempt to validate a SNS message received from Amazon
@@ -165,9 +171,23 @@ class IpnHandler():
         return True
 
     def to_json(self):
-        """Retuns notification message as JSON"""
+        """Retuns notification message as JSON""" 
         return PaymentResponse(self._xml).to_json()
 
     def to_xml(self):
         """Retuns notification message as XML"""
         return PaymentResponse(self._xml).to_xml()
+    
+    def _sanitize_response_data(self, text):
+        editText = text
+        patterns = []
+        patterns.append(r'(?s)(<SellerNote>).*(<\/SellerNote>)')
+        patterns.append(r'(?s)(<AuthorizationBillingAddress>).*(<\/AuthorizationBillingAddress>)')
+        patterns.append(r'(?s)(<SellerAuthorizationNote>).*(<\/SellerAuthorizationNote>)')
+        patterns.append(r'(?s)(<SellerCaptureNote>).*(<\/SellerCaptureNote>)')
+        patterns.append(r'(?s)(<SellerRefundNote>).*(<\/SellerRefundNote>)')
+        replacement = r'\1 REMOVED \2'
+    
+        for pattern in patterns:
+            editText = re.sub(pattern, replacement, editText)
+        return editText

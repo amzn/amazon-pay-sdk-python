@@ -47,8 +47,12 @@ $ sudo easy_install3 -U pip
 ## Client Code Examples
 *This is only a subset of calls. All MWS Pay with Amazon API calls are supported.*
 
-Instantiate the client. The only required parameter is *sandbox*. If you do not pass in the other parameters you must set the corresponding environment variable. 
-See the [client](https://github.com/amzn/login-and-pay-with-amazon-sdk-python/blob/master/pay_with_amazon/client.py#L31-L67) documentation for more information.
+Instantiate the client. The required parameters are mws_access_key, 
+mws_secret key, merchant_id, region, and currency_code. 
+*sandbox* sets up if it is in Sandbox or Production mode. If you do not pass 
+in the required parameters you must set the corresponding environment variable. 
+See the [client](https://github.com/amzn/login-and-pay-with-amazon-sdk-python/blob/master/pay_with_amazon/client.py#L31-L67) 
+documentation for more information.
 ```python
 from pay_with_amazon.client import PayWithAmazonClient
 
@@ -93,7 +97,7 @@ Authorize
 ret = client.authorize(
     amazon_order_reference_id='AMAZON_ORDER_REFERENCE_ID',
     authorization_reference_id='MY_UNIQUE_AUTHORIZATION_ID',
-    authorization_amount='1.00',
+    amount='1.00',
     seller_authorization_note='Authorization note.',
     transaction_timeout=10,
     capture_now=False)    
@@ -130,8 +134,11 @@ ret = client.get_capture_details(
 print(ret.to_json()) # to_xml and to_dict are also valid
  ```
 
-Charge - This method combines all the above calls into one which allows you to set, confirm, authorize, and capture in a single call.
- If this is a billing agreement it will first check to see what state it's in to see if it needs to be set. If already set, it will authorize on the billing agreement.
+Charge - This method combines all the above calls into one which allows you to 
+set, confirm, authorize, and capture in a single call.
+ If this is a billing agreement it will first check to see what state it's in 
+ to see if it needs to be set. If already set, it will authorize on the billing 
+ agreement.
 ```python
 ret = client.charge(
     amazon_order_reference_id='ORDER_REFERENCE_ID or BILLING_AGREEMENT_ID',
@@ -139,6 +146,35 @@ ret = client.charge(
     charge_note='MY_CHARGE_NOTE',
     authorize_reference_id='MY_UNIQUE_AUTHORIZATION_ID')
     print(ret.to_json())
+```
+
+Logging has been enabled, if you want to have logging output there are 3 ways it
+can be used. If you have logging settings you are currently using and you don't 
+want them to change you can set log_enabled=True and logging output will follow 
+your defined logging. If you are not familiar with how to setup logging settings
+we have pre-defined settings for you to use. In addition to setting log_enabled 
+to true, if you want the logging output to a file set log_file_name to the name 
+and location you want logging output to. If no value is provided logging will be 
+sent to the console. The log_levels that can be set are "CRITICAL"; "ERROR"; 
+"WARNING"; "INFO"; "DEBUG"; "NOTSET". In the SDK, only DEBUG is used. 
+log_file_name and log_level are set to None by default.
+log_enabled is set to False.
+
+Below is an example of how you can enable logging and output to a file. For 
+additional settings for client please see the client example above.
+```python
+from pay_with_amazon.client import PayWithAmazonClient
+
+client = PayWithAmazonClient(
+        mws_access_key=session['mws_access_key'],
+        mws_secret_key=session['mws_secret_key'],
+        merchant_id=session['merchant_id'],
+        sandbox=True,
+        region='na',
+        currency_code='USD',
+        log_enabled=True,
+        log_file_name="log.txt",
+        log_level="DEBUG")
 ```
 
 ## Example Responses
