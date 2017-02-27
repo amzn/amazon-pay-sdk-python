@@ -1,0 +1,23 @@
+
+    <OrderReferenceDetails>
+      <Destination>
+        <DestinationType>Physical</DestinationType>
+        <PhysicalDestination> REMOVED </PhysicalDestination>
+        <AuthorizationBillingAddress> REMOVED </AuthorizationBillingAddress>
+        <BillingAddress> REMOVED </BillingAddress>
+      </Destination>
+      <ExpirationTimestamp>2017-04-03T15:36:30.897Z</ExpirationTimestamp>
+      <SellerOrderAttributes/>
+      <SellerNote> REMOVED </SellerNote>
+      <SellerAuthorizationNote> REMOVED </SellerAuthorizationNote>
+      <SellerCaptureNote> REMOVED </SellerCaptureNote>
+      <SellerRefundNote> REMOVED </SellerRefundNote>
+      <OrderTotal>
+        <CurrencyCode>USD</CurrencyCode>
+        <Amount>19.95</Amount>
+      </OrderTotal>
+      <ReleaseEnvironment>Sandbox</ReleaseEnvironment>
+      <AmazonOrderReferenceId>S01-3616844-6294179</AmazonOrderReferenceId>
+      <CreationTimestamp>2016-10-05T15:36:30.897Z</CreationTimestamp>
+      <RequestPaymentAuthorization>false</RequestPaymentAuthorization>
+    </OrderReferenceDetails>

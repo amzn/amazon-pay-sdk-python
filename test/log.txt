@@ -1,0 +1,33 @@
+
+    <OrderReferenceDetails>
+      <Destination>
+        <DestinationType>Physical</DestinationType>
+        <PhysicalDestination> REMOVED </PhysicalDestination>
+        <AuthorizationBillingAddress>
+          <StateOrRegion>London</StateOrRegion>
+          <City>Chelsea</City>
+          <CountryCode>GB</CountryCode>
+          <PostalCode>SW3 4ND</PostalCode>
+        </AuthorizationBillingAddress>
+        <BillingAddress>
+          <StateOrRegion>London</StateOrRegion>
+          <City>Chelsea</City>
+          <CountryCode>GB</CountryCode>
+          <PostalCode>SW3 4ND</PostalCode>
+        </BillingAddress>
+      </Destination>
+      <ExpirationTimestamp>2017-04-03T15:36:30.897Z</ExpirationTimestamp>
+      <SellerOrderAttributes/>
+      <SellerNote>This is a seller note</SellerNote>
+      <SellerAuthorizationNote>This is a seller note</SellerAuthorizationNote>
+      <SellerCaptureNote>This is a seller note</SellerCaptureNote>
+      <SellerRefundNote>This is a seller note</SellerRefundNote>
+      <OrderTotal>
+        <CurrencyCode>USD</CurrencyCode>
+        <Amount>19.95</Amount>
+      </OrderTotal>
+      <ReleaseEnvironment>Sandbox</ReleaseEnvironment>
+      <AmazonOrderReferenceId>S01-3616844-6294179</AmazonOrderReferenceId>
+      <CreationTimestamp>2016-10-05T15:36:30.897Z</CreationTimestamp>
+      <RequestPaymentAuthorization>false</RequestPaymentAuthorization>
+    </OrderReferenceDetails>
