@@ -4,6 +4,8 @@ import json
 import platform
 import unittest
 import xml.etree.ElementTree as et
+import amazon_pay.ap_region as ap_region
+import amazon_pay.version as ap_version
 from unittest.mock import Mock, patch
 from amazon_pay.client import AmazonPayClient
 from amazon_pay.payment_request import PaymentRequest
@@ -175,15 +177,24 @@ class AmazonPayClientTest(unittest.TestCase):
 
     @patch('requests.post')
     def test_headers(self, mock_urlopen):
+        py_version = ".".join(map(str, sys.version_info[:3]))
         mock_urlopen.side_effect = self.mock_requests_post
         self.client.get_service_status()
+        if sys.version_info[0] == 3 and sys.version_info[1] >= 2:
+            py_valid = True
+        
         header_expected = {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent': 'amazon-pay-sdk-python/2.0.0; Python/3.5.2; {0}/{1}'.format(
-                str(platform.system()),
-                str(platform.release()))
+            "User-Agent":'amazon-pay-sdk-python/{0} ({1}Python/{2}; {3}/{4})'.format(
+            str(ap_version.versions['application_version']),
+            (''),
+            py_version,
+            str(platform.system()),
+            str(platform.release())
+            )
         }
         self.assertEqual(mock_urlopen.call_args[1]['headers'], header_expected)
+        self.assertTrue(py_valid, True)
 
     @patch('requests.post')
     def test_create_order_reference_for_id(self, mock_urlopen):
@@ -382,12 +393,14 @@ class AmazonPayClientTest(unittest.TestCase):
         self.client.get_order_reference_details(
             amazon_order_reference_id='test',
             address_consent_token='test',
+            access_token='test',
             merchant_id='test',
             mws_auth_token='test')
         parameters = {
             'Action': 'GetOrderReferenceDetails',
             'AmazonOrderReferenceId': 'test',
             'AddressConsentToken': 'test',
+            'AccessToken': 'test',
             'SellerId': 'test',
             'MWSAuthToken': 'test'}
         data_expected = self.request._querystring(parameters)

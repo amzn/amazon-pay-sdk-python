@@ -643,6 +643,7 @@ class AmazonPayClient:
     def get_order_reference_details(
             self,
             amazon_order_reference_id,
+            access_token=None,
             address_consent_token=None,
             merchant_id=None,
             mws_auth_token=None):
@@ -655,6 +656,13 @@ class AmazonPayClient:
             The order reference identifier. This value is retrieved from the
             amazon pay Button widget after the buyer has successfully authenticated
             with Amazon.
+                
+        access_token : string, optional
+            The access token. This value is retrieved from the
+            amazon pay Button widget after the buyer has successfully authenticated
+            with Amazon. (Note: When using this value, you cannot use the
+            address_consent_token at the same time, or this will cause an error.
+            The same note applies when using just the address_consent_token)
 
         address_consent_token : string, optional
             The buyer address consent token. This value is retrieved from the
@@ -674,6 +682,7 @@ class AmazonPayClient:
         }
         optionals = {
             'AddressConsentToken': address_consent_token,
+            'AccessToken': access_token,
             'SellerId': merchant_id,
             'MWSAuthToken': mws_auth_token}
         return self._operation(params=parameters, options=optionals)
