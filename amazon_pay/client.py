@@ -782,6 +782,140 @@ class AmazonPayClient:
             'MWSAuthToken': mws_auth_token}
         return self._operation(params=parameters, options=optionals)
 
+    def list_order_reference(
+            self,
+            query_id,
+            query_id_type,
+            created_time_range_start=None,
+            created_time_range_end=None,
+            sort_order=None,
+            page_size=None,
+            order_reference_status_list_filter=None
+            ):
+        
+        """
+            Allows the search of any Amazon Pay order made using secondary
+            seller order IDs generated manually, a solution provider, or a custom
+            order fulfillment service.
+            
+            Parameters
+            ==========================================
+            query_id: string, required
+                The identifier that the merchant wishes to use in relation to the
+                query id type.
+            
+            query_id_type: string, required
+                The type of query the id is referencing.
+                Note: At this time, you can only use the query type (SellerOrderId).
+                More options will be available in the future. Default: SellerOrderId
+               
+            created_time_range_start: string, optional
+                This filter will allow a merchant to search for a particular item
+                within a date range of their choice.
+                Note: If you wish to use this filter, you MUST fill in an end date,
+                otherwise you will get an error returned when searching. You must
+                also use the ISO 8601 time format to return a valid response when
+                searching in a date range. Either of the two examples will work
+                when using this filter. Default: None
+                Example: YYYY-MM-DD or YYYY-MM-DDTHH:MM.
+            
+            created_time_range_end: string, optional
+                The end-date for the date range the merchant wishes to search for
+                any of their orders they're looking for.
+                Note: You need to only use this option if you are using the 
+                created_time_range_start parameter. Default: None
+            
+            sort_order: string, optional
+                Filter can be set for "Ascending", or "Descending" order, and must
+                be written out as shown above. This will sort the orders via 
+                the respective option. Default: None
+            
+            page_size: integer, optional
+                This filter limits how many results will be displayed per 
+                request. Default: None
+            
+            order_reference_status_list_filter: list (string), optional
+                When searching for an order, this filter is related to the status
+                of the orders on file. You can search for any valid status for orders
+                on file. Filters MUST be written out in English.
+                Example: "Open", "Closed", "Suspended", "Canceled"
+                Default: None       
+        """
+        
+        """ For use for Order Reference Filter list """
+        def enumerate_param(param, values):
+            """
+                Builds a dictionary of an enumerated parameter from the filter list.
+                Example:
+                enumerate_param(
+                'OrderReferenceStatusListFilter.OrderReferenceStatus.',
+                (Open, Closed, Canceled))
+                returns
+                {
+                    OrderReferenceStatusListFilter.OrderReferenceStatus.1: Open,
+                    OrderReferenceStatusListFilter.OrderReferenceStatus.2: Closed,
+                    OrderReferenceStatusListFilter.OrderReferenceStatus.3: Canceled
+                }
+            """
+            params = {}
+            if values is not None:
+                if not param.endswith('.'):
+                    param = "%s." % param
+                for num, value in enumerate(values):
+                    params['%s%d' % (param, (num + 1))] = value
+            return params
+               
+        def get_list_filter(filter_types):
+            """This will apply your filters from the list filter parameter"""
+            if isinstance(filter_types, list):
+                optionals.update(enumerate_param('OrderReferenceStatusListFilter.OrderReferenceStatus.', filter_types))
+            else:
+                if ',' in filter_types:
+                    filter_types = filter_types.replace(' ','')
+                    filter_types = filter_types.split(',')
+                    optionals.update(enumerate_param('OrderReferenceStatusListFilter.OrderReferenceStatus.', filter_types))
+                else:
+                    print("Incorrect format for order_reference_status_list_filter: Please use the format ['Open', 'Closed'], or 'Open, Closed'")
+                    
+        """ Above code for Order Reference Filter list """           
+        
+        parameters = {
+            'Action': 'ListOrderReference',
+            'SellerId': self.merchant_id,
+            'QueryId': query_id,
+            'QueryIdType': query_id_type,
+            'PaymentDomain': (self.region + "_" + self.currency_code).upper()
+        }            
+        optionals = {
+            'CreatedTimeRange.StartTime': created_time_range_start,
+            'CreatedTimeRange.EndTime': created_time_range_end,
+            'SortOrder': sort_order,
+            'PageSize': page_size
+        }
+        
+        if order_reference_status_list_filter is not None:
+            get_list_filter(order_reference_status_list_filter)
+        
+        return self._operation(params=parameters, options=optionals)
+                    
+    def list_order_reference_by_next_token(
+        self,
+        next_page_token):
+        """
+            next_page_token : string, required
+                Uses the key from a list_order_reference call that provides a 
+                NextPageToken for a merchant to call to review the next page 
+                of items, and if applicable, another NextPageToken for the next
+                set of items to read through.
+                
+        """
+        
+        parameters = {
+            'Action': 'ListOrderReferenceByNextToken',
+            'NextPageToken': next_page_token}
+        
+        return self._operation(params=parameters)
+
     def authorize(
             self,
             amazon_order_reference_id,
@@ -1296,3 +1430,4 @@ class AmazonPayClient:
 
         request.send_post()
         return request.response
+ 

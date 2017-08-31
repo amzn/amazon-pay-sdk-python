@@ -10,6 +10,8 @@ from unittest.mock import Mock, patch
 from amazon_pay.client import AmazonPayClient
 from amazon_pay.payment_request import PaymentRequest
 from amazon_pay.payment_response import PaymentResponse, PaymentErrorResponse
+from symbol import parameters
+from doctest import UnexpectedException
 
 
 class AmazonPayClientTest(unittest.TestCase):
@@ -455,6 +457,65 @@ class AmazonPayClientTest(unittest.TestCase):
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
+    @patch('requests.post')
+    def test_list_order_reference(self, mock_urlopen):
+        mock_urlopen.side_effect = self.mock_requests_post
+        self.client.list_order_reference(
+            query_id='TestOrder0001',
+            query_id_type='SellerOrderId',
+            created_time_range_start='2017-05-01',
+            created_time_range_end='2017-07-01',
+            sort_order='Ascending',
+            page_size=1,
+            order_reference_status_list_filter=['Open','Closed'])
+        parameters = {
+            'Action': 'ListOrderReference',
+            'QueryId': 'TestOrder0001',
+            'QueryIdType': 'SellerOrderId',
+            'PaymentDomain': 'NA_TEST',
+            'CreatedTimeRange.StartTime': '2017-05-01',
+            'CreatedTimeRange.EndTime': '2017-07-01',
+            'SortOrder': 'Ascending',
+            'PageSize': 1,
+            'OrderReferenceStatusListFilter.OrderReferenceStatus.1': 'Open',
+            'OrderReferenceStatusListFilter.OrderReferenceStatus.2': 'Closed'}
+        data_expected = self.request._querystring(parameters)
+        self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
+
+    @patch('requests.post')
+    def test_list_order_reference_time_check_error(self, mock_urlopen):
+        mock_urlopen.side_effect = self.mock_requests_post
+        self.client.list_order_reference(
+            query_id='TestOrder0001',
+            query_id_type='SellerOrderId',
+            created_time_range_start='2017-05-01',
+            created_time_range_end=None,
+            sort_order=None,
+            page_size=None,
+            order_reference_status_list_filter=None)
+         
+        parameters = {
+            'Action': 'ListOrderReference',
+            'QueryId': 'TestOrder0001',
+            'QueryIdType': 'SellerOrderId',
+            'PaymentDomain': 'NA_TEST',
+            'CreatedTimeRange.StartTime': '2017-05-01'}
+        data_expected = self.request._querystring(parameters)
+        
+        self.assertRaises(Exception)
+
+        
+    @patch('requests.post')
+    def test_list_order_reference_by_next_token(self, mock_urlopen):
+        mock_urlopen.side_effect = self.mock_requests_post
+        self.client.list_order_reference_by_next_token(
+            next_page_token='test')
+        parameters= {
+            'Action': 'ListOrderReferenceByNextToken',
+            'NextPageToken': 'test'}
+        data_expected = self.request._querystring(parameters)
+        self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
+        
     @patch('requests.post')
     def test_authorize(self, mock_urlopen):
         mock_urlopen.side_effect = self.mock_requests_post

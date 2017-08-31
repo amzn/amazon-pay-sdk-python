@@ -341,6 +341,64 @@ Response
 }
 ```
 
+## Search for Orders
+
+ListOrderReference
+```python
+# This method returns a list of all orders made with the custom ID tag attached
+# on each order usually the SellerOrderId.
+ret = client.list_order_reference(
+    query_id="MY_QUERY_ID",
+    query_type="MY_QUERY_TYPE")
+print(ret.to_json())
+```
+
+Response
+```json
+{
+    "ListOrderReferenceResponse": {
+        "ListOrderReferenceResult": {
+            "OrderReferenceList": {
+                "OrderReference": {
+                    "ReleaseEnvironment": "Sandbox",
+                    "OrderReferenceStatus": {
+                        "LastUpdateTimestamp": "2017-08-10T21:25:38.628Z",
+                        "State": "Open"
+                    },
+                    "AmazonOrderReferenceId": "S01-4946947-4455988",
+                    "CreationTimestamp": "2017-08-10T21:25:10.592Z",
+                    "SellerOrderAttributes": {
+                        "StoreName": "Test Store Name",
+                        "CustomInformation": "Example Customer Info",
+                        "OrderItemCategories": {
+                            "OrderItemCategory": "Antiques"
+                        },
+                        "SellerOrderId": "testID10035"
+                    },
+                    "OrderTotal": {
+                        "CurrencyCode": "USD",
+                        "Amount": "12.00"
+                    }
+                }
+            }
+        },
+        "ResponseMetadata": {
+            "RequestId": "fbd130c0-fc7e-46ca-8d97-248f89c16a1e"
+        }
+    }
+}
+```
+
+ListOrderReferenceByNextToken
+```python
+# This method returns a list of the continued orders from the previous call
+# using a NextPageToken value to render the next page of data if a page_size
+# was used to split the list of orders into multiple pages
+reply = client.list_order_reference_by_next_token(
+    next_page_token="NEXT_PAGE_TOKEN") 
+print(ret.to_json())
+```
+
 
 ## API Reference
 
