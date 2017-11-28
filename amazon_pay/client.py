@@ -640,6 +640,122 @@ class AmazonPayClient:
             'MWSAuthToken': mws_auth_token}
         return self._operation(params=parameters, options=optionals)
 
+    def set_order_attributes(
+         self,
+         amazon_order_reference_id,
+         currency_code=None,
+         amount=None,
+         seller_order_id=None,
+         payment_service_provider_id=None,
+         payment_service_provider_order_id=None,
+         platform_id=None,
+         seller_note=None,
+         merchant_id=None,
+         request_payment_authorization=None,
+         store_name=None,
+         list_order_item_categories=None,
+         custom_information=None):
+        '''
+        Return and update the information of an order with missing
+        or updated information
+
+        Parameters
+        ----------
+        amazon_order_reference_id : string, required
+        The order reference identifier retrieved from the amazon pay Button
+        widget.
+
+        merchant_id : string, required
+        Your merchant ID. If you are a marketplace enter the seller's merchant
+        ID.
+
+        currency_code : string, optional
+        The currency you're accepting the order in. A three-digit
+        currency code, formatted based on the ISO 4217 standard.
+        Default: None
+
+        amount : string, optional
+        Specifies the total amount of the order represented by this order
+        reference. Default: None
+
+        seller_order_id : string, optional
+        The seller-specified identifier of this order. This is displayed to
+        the buyer in the email they receive from Amazon and also in their
+        transaction history on the Amazon Pay website. Default: None
+
+        payment_service_provider_id : string, optional
+        For use with a Payment Service Provider. This is their specific
+        ID that is associated with Amazon Pay accounts and services.
+        Default: None
+
+        payment_service_provider_order_id : string, optional
+        For use with a Payment Service Provider. This is their specific
+        ID that is linked to your specific Amazon Pay Order Reference ID.
+        Default: None
+
+        platform_id : string, optional
+        Represents the SellerId of the Solution Provider that developed the
+        platform. This value should only be provided by Solution Providers.
+        It should not be provided by sellers creating their own custom
+        integration. Default: None
+
+        seller_note : string, optional
+        Represents a description of the order that is displayed in
+        e-mails to the buyer. Default: None
+
+        request_payment_authorization : boolean (string), optional
+        Specifies if the merchants want their buyers to go through
+        multi-factor authentication. Default: None
+
+        store_name : string, optional
+        The identifier of the store from which the order was placed. This
+        overrides the default value in Seller Central under Settings >
+        Account Settings. It is displayed to the buyer in the email they
+        receive from Amazon and also in their transaction history on the
+        Amazon Pay website. Default: None
+
+
+        list_order_item_categories : list (string), optional
+        List the category, or categories, that correlate to the order
+        in question. You may set more than one item. Default: None
+
+        custom_information : string, optional
+        Any additional information you want your back-end system to
+        keep record of. Your customers will not see this, and this
+        will not be visible on Seller Central. This can only be
+        accessed if your back end system supports calling this variable.
+        Default: None
+        '''
+
+        parameters = {
+            'Action': 'SetOrderAttributes',
+            'AmazonOrderReferenceId': amazon_order_reference_id
+        }
+
+        optionals = {
+            'SellerId': merchant_id,
+            'OrderAttributes.OrderTotal.Amount': amount,
+            'OrderAttributes.OrderTotal.CurrencyCode': currency_code,
+            'OrderAttributes.SellerOrderAttributes.CustomInformation': custom_information,
+            'OrderAttributes.PaymentServiceProviderAttributes.PaymentServiceProviderId':
+                payment_service_provider_id,
+            'OrderAttributes.PaymentServiceProviderAttributes.PaymentServiceProviderOrderId':
+                payment_service_provider_order_id,
+            'OrderAttributes.PlatformId': platform_id,
+            'OrderAttributes.RequestPaymentAuthorization': request_payment_authorization,
+            'OrderAttributes.SellerNote': seller_note,
+            'OrderAttributes.SellerOrderAttributes.SellerOrderId': seller_order_id,
+            'OrderAttributes.SellerOrderAttributes.StoreName': store_name
+        }
+
+        if list_order_item_categories is not None:
+            self._enumerate(
+                'OrderAttributes.SellerOrderAttributes.OrderItemCategories.OrderItemCategory.',
+                list_order_item_categories, optionals)
+
+        return self._operation(params=parameters, options=optionals)
+
+
     def get_order_reference_details(
             self,
             amazon_order_reference_id,
@@ -790,25 +906,26 @@ class AmazonPayClient:
             created_time_range_end=None,
             sort_order=None,
             page_size=None,
+            merchant_id=None,
             order_reference_status_list_filter=None
             ):
-        
+
         """
             Allows the search of any Amazon Pay order made using secondary
             seller order IDs generated manually, a solution provider, or a custom
             order fulfillment service.
-            
+
             Parameters
             ==========================================
             query_id: string, required
                 The identifier that the merchant wishes to use in relation to the
                 query id type.
-            
+
             query_id_type: string, required
                 The type of query the id is referencing.
                 Note: At this time, you can only use the query type (SellerOrderId).
                 More options will be available in the future. Default: SellerOrderId
-               
+
             created_time_range_start: string, optional
                 This filter will allow a merchant to search for a particular item
                 within a date range of their choice.
@@ -818,22 +935,22 @@ class AmazonPayClient:
                 searching in a date range. Either of the two examples will work
                 when using this filter. Default: None
                 Example: YYYY-MM-DD or YYYY-MM-DDTHH:MM.
-            
+
             created_time_range_end: string, optional
                 The end-date for the date range the merchant wishes to search for
                 any of their orders they're looking for.
                 Note: You need to only use this option if you are using the 
                 created_time_range_start parameter. Default: None
-            
+
             sort_order: string, optional
                 Filter can be set for "Ascending", or "Descending" order, and must
                 be written out as shown above. This will sort the orders via 
                 the respective option. Default: None
-            
+
             page_size: integer, optional
                 This filter limits how many results will be displayed per 
                 request. Default: None
-            
+
             order_reference_status_list_filter: list (string), optional
                 When searching for an order, this filter is related to the status
                 of the orders on file. You can search for any valid status for orders
@@ -841,47 +958,9 @@ class AmazonPayClient:
                 Example: "Open", "Closed", "Suspended", "Canceled"
                 Default: None       
         """
-        
-        """ For use for Order Reference Filter list """
-        def enumerate_param(param, values):
-            """
-                Builds a dictionary of an enumerated parameter from the filter list.
-                Example:
-                enumerate_param(
-                'OrderReferenceStatusListFilter.OrderReferenceStatus.',
-                (Open, Closed, Canceled))
-                returns
-                {
-                    OrderReferenceStatusListFilter.OrderReferenceStatus.1: Open,
-                    OrderReferenceStatusListFilter.OrderReferenceStatus.2: Closed,
-                    OrderReferenceStatusListFilter.OrderReferenceStatus.3: Canceled
-                }
-            """
-            params = {}
-            if values is not None:
-                if not param.endswith('.'):
-                    param = "%s." % param
-                for num, value in enumerate(values):
-                    params['%s%d' % (param, (num + 1))] = value
-            return params
-               
-        def get_list_filter(filter_types):
-            """This will apply your filters from the list filter parameter"""
-            if isinstance(filter_types, list):
-                optionals.update(enumerate_param('OrderReferenceStatusListFilter.OrderReferenceStatus.', filter_types))
-            else:
-                if ',' in filter_types:
-                    filter_types = filter_types.replace(' ','')
-                    filter_types = filter_types.split(',')
-                    optionals.update(enumerate_param('OrderReferenceStatusListFilter.OrderReferenceStatus.', filter_types))
-                else:
-                    print("Incorrect format for order_reference_status_list_filter: Please use the format ['Open', 'Closed'], or 'Open, Closed'")
-                    
-        """ Above code for Order Reference Filter list """           
-        
+
         parameters = {
             'Action': 'ListOrderReference',
-            'SellerId': self.merchant_id,
             'QueryId': query_id,
             'QueryIdType': query_id_type,
             'PaymentDomain': (self.region + "_" + self.currency_code).upper()
@@ -890,14 +969,17 @@ class AmazonPayClient:
             'CreatedTimeRange.StartTime': created_time_range_start,
             'CreatedTimeRange.EndTime': created_time_range_end,
             'SortOrder': sort_order,
+            'SellerId': merchant_id,
             'PageSize': page_size
         }
-        
+
         if order_reference_status_list_filter is not None:
-            get_list_filter(order_reference_status_list_filter)
-        
+            self._enumerate(
+                'OrderReferenceStatusListFilter.OrderReferenceStatus.',
+                order_reference_status_list_filter, optionals)
+
         return self._operation(params=parameters, options=optionals)
-                    
+
     def list_order_reference_by_next_token(
         self,
         next_page_token):
@@ -909,7 +991,7 @@ class AmazonPayClient:
                 set of items to read through.
                 
         """
-        
+
         parameters = {
             'Action': 'ListOrderReferenceByNextToken',
             'NextPageToken': next_page_token}
@@ -1431,3 +1513,44 @@ class AmazonPayClient:
         request.send_post()
         return request.response
  
+    def _enumerate(
+        self,
+        category,
+        filter_types,
+        optionals):
+
+        def enumerate_param(param, values):
+            """
+                Builds a dictionary of an enumerated parameter from the filter list.
+                This is currently used for two API calls in the client. Specifically,
+                set_order_attributes & list_order_reference
+                Example: (For set_order_attributes)
+                enumerate_param(
+                'OrderAttributes.SellerOrderAttributes.OrderItemCategories.OrderItemCategory.',
+                (["Antiques", "Outdoor"])
+                returns
+                {
+                OrderAttributes.SellerOrderAttributes.OrderItemCategories.OrderItemCategory.1:
+                    Antiques,
+                OrderAttributes.SellerOrderAttributes.OrderItemCategories.OrderItemCategory.2:
+                    Outdoor,
+                }
+            """
+            params = {}
+            if values is not None:
+                if not param.endswith('.'):
+                    param = "%s." % param
+                for num, value in enumerate(values):
+                    params['%s%d' % (param, (num + 1))] = value
+            return params
+
+        """This will apply your filters from the list filter parameter"""
+        if isinstance(filter_types, list):
+            optionals.update(enumerate_param(category, filter_types))
+        else:
+            if ',' in filter_types:
+                filter_types = filter_types.replace(' ','')
+                filter_types = filter_types.split(',')
+                optionals.update(enumerate_param(category, filter_types))
+            else:
+                raise Exception("Invalid format for this request.")

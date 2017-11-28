@@ -11,7 +11,6 @@ from amazon_pay.client import AmazonPayClient
 from amazon_pay.payment_request import PaymentRequest
 from amazon_pay.payment_response import PaymentResponse, PaymentErrorResponse
 from symbol import parameters
-from doctest import UnexpectedException
 
 
 class AmazonPayClientTest(unittest.TestCase):
@@ -388,6 +387,44 @@ class AmazonPayClientTest(unittest.TestCase):
             'MWSAuthToken': 'test'}
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
+
+    @patch('requests.post')
+    def test_set_order_attributes(self, mock_urlopen):
+        mock_urlopen.side_effect = self.mock_requests_post
+        self.client.set_order_attributes(
+            amazon_order_reference_id='test',
+            merchant_id='test',
+            currency_code='test',
+            amount='test',
+            seller_order_id='test',
+            payment_service_provider_id='test',
+            payment_service_provider_order_id='test',
+            platform_id='test',
+            seller_note='test',
+            request_payment_authorization='test',
+            store_name='test',
+            list_order_item_categories=['test'],
+            custom_information='test')
+        parameters = {
+            'Action': 'SetOrderAttributes',
+            'AmazonOrderReferenceId': 'test',
+            'OrderAttributes.OrderTotal.Amount': 'test',
+            'OrderAttributes.OrderTotal.CurrencyCode': 'test',
+            'OrderAttributes.SellerOrderAttributes.CustomInformation': 'test',
+            'OrderAttributes.SellerOrderAttributes.OrderItemCategories.OrderItemCategory.1': 'test',
+            'OrderAttributes.PaymentServiceProviderAttributes.PaymentServiceProviderId': 'test',
+            'OrderAttributes.PaymentServiceProviderAttributes.PaymentServiceProviderOrderId': 'test',
+            'OrderAttributes.PlatformId': 'test',
+            'OrderAttributes.RequestPaymentAuthorization': 'test',
+            'SellerId': 'test',
+            'OrderAttributes.SellerNote': 'test',
+            'OrderAttributes.SellerOrderAttributes.SellerOrderId': 'test',
+            'OrderAttributes.SellerOrderAttributes.StoreName': 'test'
+        }
+
+        data_expected = self.request._querystring(parameters)
+        self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
+
 
     @patch('requests.post')
     def test_get_order_reference_details(self, mock_urlopen):
