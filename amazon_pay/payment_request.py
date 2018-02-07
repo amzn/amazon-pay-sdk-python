@@ -125,6 +125,7 @@ class PaymentRequest:
             headers=self._headers,
             verify=True)
         self._status_code = r.status_code
+        r.encoding = r.apparent_encoding	# for multibyte string
 
         if self._status_code == 200:
             self.success = True
