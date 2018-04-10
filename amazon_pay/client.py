@@ -1,6 +1,7 @@
 import re
 import os
 import sys
+import json
 import logging
 import platform
 import amazon_pay.ap_region as ap_region
@@ -578,7 +579,6 @@ class AmazonPayClient:
             custom_information=None,
             merchant_id=None,
             mws_auth_token=None):
-        # pylint: disable=too-many-arguments
         """Sets order reference details such as the order total and a
         description for the order.
 
@@ -650,11 +650,12 @@ class AmazonPayClient:
          payment_service_provider_order_id=None,
          platform_id=None,
          seller_note=None,
-         merchant_id=None,
          request_payment_authorization=None,
          store_name=None,
          list_order_item_categories=None,
-         custom_information=None):
+         custom_information=None,
+         merchant_id=None,
+         mws_auth_token=None):
         '''
         Return and update the information of an order with missing
         or updated information
@@ -662,69 +663,71 @@ class AmazonPayClient:
         Parameters
         ----------
         amazon_order_reference_id : string, required
-        The order reference identifier retrieved from the amazon pay Button
-        widget.
+            The order reference identifier retrieved from the amazon pay Button
+            widget.
 
-        merchant_id : string, required
-        Your merchant ID. If you are a marketplace enter the seller's merchant
-        ID.
+        merchant_id : string, optional
+            Your merchant ID. If you are a marketplace enter the seller's merchant
+            ID.
+
+        mws_auth_token: string, optional
+            Your marketplace web service auth token. Default: None
 
         currency_code : string, optional
-        The currency you're accepting the order in. A three-digit
-        currency code, formatted based on the ISO 4217 standard.
-        Default: None
+            The currency you're accepting the order in. A three-digit
+            currency code, formatted based on the ISO 4217 standard.
+            Default: None
 
         amount : string, optional
-        Specifies the total amount of the order represented by this order
-        reference. Default: None
+            Specifies the total amount of the order represented by this order
+            reference. Default: None
 
         seller_order_id : string, optional
-        The seller-specified identifier of this order. This is displayed to
-        the buyer in the email they receive from Amazon and also in their
-        transaction history on the Amazon Pay website. Default: None
+            The seller-specified identifier of this order. This is displayed to
+            the buyer in the email they receive from Amazon and also in their
+            transaction history on the Amazon Pay website. Default: None
 
         payment_service_provider_id : string, optional
-        For use with a Payment Service Provider. This is their specific
-        ID that is associated with Amazon Pay accounts and services.
-        Default: None
+            For use with a Payment Service Provider. This is their specific
+            ID that is associated with Amazon Pay accounts and services.
+            Default: None
 
         payment_service_provider_order_id : string, optional
-        For use with a Payment Service Provider. This is their specific
-        ID that is linked to your specific Amazon Pay Order Reference ID.
-        Default: None
+            For use with a Payment Service Provider. This is their specific
+            ID that is linked to your specific Amazon Pay Order Reference ID.
+            Default: None
 
         platform_id : string, optional
-        Represents the SellerId of the Solution Provider that developed the
-        platform. This value should only be provided by Solution Providers.
-        It should not be provided by sellers creating their own custom
-        integration. Default: None
+            Represents the SellerId of the Solution Provider that developed the
+            platform. This value should only be provided by Solution Providers.
+            It should not be provided by sellers creating their own custom
+            integration. Default: None
 
         seller_note : string, optional
-        Represents a description of the order that is displayed in
-        e-mails to the buyer. Default: None
+            Represents a description of the order that is displayed in
+            e-mails to the buyer. Default: None
 
         request_payment_authorization : boolean (string), optional
-        Specifies if the merchants want their buyers to go through
-        multi-factor authentication. Default: None
+            Specifies if the merchants want their buyers to go through
+            multi-factor authentication. Default: None
 
         store_name : string, optional
-        The identifier of the store from which the order was placed. This
-        overrides the default value in Seller Central under Settings >
-        Account Settings. It is displayed to the buyer in the email they
-        receive from Amazon and also in their transaction history on the
-        Amazon Pay website. Default: None
-
+            The identifier of the store from which the order was placed. This
+            overrides the default value in Seller Central under Settings >
+            Account Settings. It is displayed to the buyer in the email they
+            receive from Amazon and also in their transaction history on the
+            Amazon Pay website. Default: None
 
         list_order_item_categories : list (string), optional
-        List the category, or categories, that correlate to the order
-        in question. You may set more than one item. Default: None
+            List the category, or categories, that correlate to the order
+            in question. You may set more than one item. Default: None
 
         custom_information : string, optional
-        Any additional information you want your back-end system to
-        keep record of. Your customers will not see this, and this
-        will not be visible on Seller Central. This can only be
-        accessed if your back end system supports calling this variable.
-        Default: None
+            Any additional information you want your back-end system to
+            keep record of. Your customers will not see this, and this
+            will not be visible on Seller Central. This can only be
+            accessed if your back end system supports calling this variable.
+            Default: None
         '''
 
         parameters = {
@@ -733,7 +736,6 @@ class AmazonPayClient:
         }
 
         optionals = {
-            'SellerId': merchant_id,
             'OrderAttributes.OrderTotal.Amount': amount,
             'OrderAttributes.OrderTotal.CurrencyCode': currency_code,
             'OrderAttributes.SellerOrderAttributes.CustomInformation': custom_information,
@@ -745,7 +747,9 @@ class AmazonPayClient:
             'OrderAttributes.RequestPaymentAuthorization': request_payment_authorization,
             'OrderAttributes.SellerNote': seller_note,
             'OrderAttributes.SellerOrderAttributes.SellerOrderId': seller_order_id,
-            'OrderAttributes.SellerOrderAttributes.StoreName': store_name
+            'OrderAttributes.SellerOrderAttributes.StoreName': store_name,
+            'SellerId': merchant_id,
+            'MWSAuthToken': mws_auth_token
         }
 
         if list_order_item_categories is not None:
@@ -905,71 +909,99 @@ class AmazonPayClient:
             created_time_range_start=None,
             created_time_range_end=None,
             sort_order=None,
+            payment_domain=None,
             page_size=None,
+            order_reference_status_list_filter=None,
             merchant_id=None,
-            order_reference_status_list_filter=None
-            ):
+            mws_auth_token=None):
 
         """
-            Allows the search of any Amazon Pay order made using secondary
-            seller order IDs generated manually, a solution provider, or a custom
-            order fulfillment service.
+        Allows the search of any Amazon Pay order made using secondary
+        seller order IDs generated manually, a solution provider, or a custom
+        order fulfillment service.
 
-            Parameters
-            ==========================================
-            query_id: string, required
-                The identifier that the merchant wishes to use in relation to the
-                query id type.
+        Parameters
+        ==========================================
+        query_id: string, required
+            The identifier that the merchant wishes to use in relation to the
+            query id type.
 
-            query_id_type: string, required
-                The type of query the id is referencing.
-                Note: At this time, you can only use the query type (SellerOrderId).
-                More options will be available in the future. Default: SellerOrderId
+        query_id_type: string, required
+            The type of query the id is referencing.
+            Note: At this time, you can only use the query type (SellerOrderId).
+            More options will be available in the future. Default: SellerOrderId
+        
+        payment_domain: string, optional
+            The region and currency that will be set to authorize and collect
+            payments from your customers. You can leave this blank for the 
+            system to automatically assign the default payment domain for 
+            your region.
 
-            created_time_range_start: string, optional
-                This filter will allow a merchant to search for a particular item
-                within a date range of their choice.
-                Note: If you wish to use this filter, you MUST fill in an end date,
-                otherwise you will get an error returned when searching. You must
-                also use the ISO 8601 time format to return a valid response when
-                searching in a date range. Either of the two examples will work
-                when using this filter. Default: None
-                Example: YYYY-MM-DD or YYYY-MM-DDTHH:MM.
+        created_time_range_start: string, optional
+            This filter will allow a merchant to search for a particular item
+            within a date range of their choice.
+            Note: If you wish to use this filter, you MUST fill in an end date,
+            otherwise you will get an error returned when searching. You must
+            also use the ISO 8601 time format to return a valid response when
+            searching in a date range. Either of the two examples will work
+            when using this filter. Default: None
+            Example: YYYY-MM-DD or YYYY-MM-DDTHH:MM.
 
-            created_time_range_end: string, optional
-                The end-date for the date range the merchant wishes to search for
-                any of their orders they're looking for.
-                Note: You need to only use this option if you are using the 
-                created_time_range_start parameter. Default: None
+        created_time_range_end: string, optional
+            The end-date for the date range the merchant wishes to search for
+            any of their orders they're looking for.
+            Note: You need to only use this option if you are using the 
+            created_time_range_start parameter. Default: None
 
-            sort_order: string, optional
-                Filter can be set for "Ascending", or "Descending" order, and must
-                be written out as shown above. This will sort the orders via 
-                the respective option. Default: None
+        sort_order: string, optional
+            Filter can be set for "Ascending", or "Descending" order, and must
+            be written out as shown above. This will sort the orders via 
+            the respective option. Default: None
 
-            page_size: integer, optional
-                This filter limits how many results will be displayed per 
-                request. Default: None
+        page_size: integer, optional
+            This filter limits how many results will be displayed per 
+            request. Default: None
 
-            order_reference_status_list_filter: list (string), optional
-                When searching for an order, this filter is related to the status
-                of the orders on file. You can search for any valid status for orders
-                on file. Filters MUST be written out in English.
-                Example: "Open", "Closed", "Suspended", "Canceled"
-                Default: None       
+        merchant_id : string, optional
+            Your merchant ID. If you are a marketplace enter the seller's merchant
+            ID.
+
+        mws_auth_token: string, optional
+            Your marketplace web service auth token. Default: None
+
+        order_reference_status_list_filter: list (string), optional
+            When searching for an order, this filter is related to the status
+            of the orders on file. You can search for any valid status for orders
+            on file. Filters MUST be written out in English.
+            Example: "Open", "Closed", "Suspended", "Canceled"
+            Default: None       
         """
+        
+        if self.region is not None:
+            region_code = self.region.lower()
+            if region_code == 'na':
+                payment_domain = 'NA_USD'
+            elif region_code in ('uk', 'gb'):
+                payment_domain = 'EU_GBP'
+            elif region_code in ('jp', 'fe'):
+                payment_domain = 'FE_JPY' 
+            elif region_code in ('eu', 'de', 'fr', 'it', 'es', 'cy'):
+                payment_domain = 'EU_EUR'
+            else:
+                raise ValueError("Error. The current region code does not match our records")
 
         parameters = {
             'Action': 'ListOrderReference',
             'QueryId': query_id,
             'QueryIdType': query_id_type,
-            'PaymentDomain': (self.region + "_" + self.currency_code).upper()
+            'PaymentDomain': payment_domain
         }            
         optionals = {
             'CreatedTimeRange.StartTime': created_time_range_start,
             'CreatedTimeRange.EndTime': created_time_range_end,
             'SortOrder': sort_order,
             'SellerId': merchant_id,
+            'MWSAuthToken': mws_auth_token,
             'PageSize': page_size
         }
 
@@ -981,22 +1013,124 @@ class AmazonPayClient:
         return self._operation(params=parameters, options=optionals)
 
     def list_order_reference_by_next_token(
-        self,
-        next_page_token):
+            self,
+            next_page_token,
+            merchant_id=None,
+            mws_auth_token=None):
         """
-            next_page_token : string, required
-                Uses the key from a list_order_reference call that provides a 
-                NextPageToken for a merchant to call to review the next page 
-                of items, and if applicable, another NextPageToken for the next
-                set of items to read through.
-                
+        next_page_token : string, required
+            Uses the key from a list_order_reference call that provides a 
+            NextPageToken for a merchant to call to review the next page 
+            of items, and if applicable, another NextPageToken for the next
+            set of items to read through.
+
+        merchant_id : string, optional
+            Your merchant ID. If you are a marketplace enter the seller's merchant
+            ID.
+
+        mws_auth_token: string, optional
+            Your marketplace web service auth token. Default: None
+
         """
 
         parameters = {
             'Action': 'ListOrderReferenceByNextToken',
             'NextPageToken': next_page_token}
-        
-        return self._operation(params=parameters)
+        optionals = {
+            'SellerId': merchant_id,
+            'MWSAuthToken': mws_auth_token}
+        return self._operation(params=parameters, options=optionals)
+
+    def get_payment_details(
+            self,
+            amazon_order_reference_id,
+            merchant_id=None,
+            mws_auth_token=None):
+
+        '''
+        This is a convenience function that will return every authorization, 
+        charge, and refund call of an Amazon Pay order ID.
+
+        Parameters
+        ----------
+        amazon_order_reference_id: string, required
+            The ID of the order reference for which the details are being
+            requested.
+
+        merchant_id : string, optional
+            Your merchant ID. If you are a marketplace enter the seller's merchant
+            ID.
+
+        mws_auth_token: string, optional
+            Your marketplace web service auth token. Default: None
+        '''
+
+        parameters = {
+            'Action': 'GetOrderReferenceDetails',
+            'AmazonOrderReferenceId': amazon_order_reference_id
+        }
+
+        optionals = {
+            'SellerId': merchant_id,
+            'MWSAuthToken': mws_auth_token
+        }
+
+        query = self._operation(params=parameters, options=optionals)
+        answer = []
+        answer.append(query)
+        queryID = json.loads(query.to_json())
+        memberID = queryID['GetOrderReferenceDetailsResponse']\
+            ['GetOrderReferenceDetailsResult']['OrderReferenceDetails']['IdList']
+
+        if memberID is not None:
+            '''
+                This check will see if the variable is in a list form or not
+                if it is not it will covert it into a single item list.
+                Otherwise, it will process the variable normally as a list.
+            '''
+            if type(memberID['member']) is not list:
+                memberID = [memberID['member']]
+            else:
+                memberID = memberID['member']
+
+            for id in memberID:
+                parameters = {
+                    'Action': 'GetAuthorizationDetails',
+                    'AmazonAuthorizationId': id
+                }
+                response = self._operation(params=parameters)
+                answer.append(response)
+                queryID = json.loads(response.to_json())
+                chargeID = queryID['GetAuthorizationDetailsResponse']\
+                    ['GetAuthorizationDetailsResult']['AuthorizationDetails']['IdList']
+
+                if chargeID is not None:
+                    chargeID = chargeID['member']
+                    parameters = {
+                        'Action': 'GetCaptureDetails',
+                        'AmazonCaptureId': chargeID
+                    }
+                    response = self._operation(params=parameters)
+                    queryID = json.loads(response.to_json())
+                    refundID = queryID['GetCaptureDetailsResponse']\
+                        ['GetCaptureDetailsResult']['CaptureDetails']['IdList']
+                    answer.append(response)
+
+                    if refundID is not None:
+                        if type(refundID['member']) is not list:
+                            refundID = [refundID['member']]
+                        else:
+                            refundID = refundID['member'] 
+
+                        for id in refundID:
+                            parameters = {
+                                'Action': 'GetRefundDetails',
+                                'AmazonRefundId': id
+                            }
+                        response = self._operation(params=parameters)
+                        answer.append(response)
+
+        return answer
 
     def authorize(
             self,
@@ -1533,7 +1667,7 @@ class AmazonPayClient:
                 OrderAttributes.SellerOrderAttributes.OrderItemCategories.OrderItemCategory.1:
                     Antiques,
                 OrderAttributes.SellerOrderAttributes.OrderItemCategories.OrderItemCategory.2:
-                    Outdoor,
+                    Outdoor
                 }
             """
             params = {}

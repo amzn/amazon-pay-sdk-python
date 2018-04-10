@@ -387,13 +387,12 @@ class AmazonPayClientTest(unittest.TestCase):
             'MWSAuthToken': 'test'}
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
-
+        
     @patch('requests.post')
     def test_set_order_attributes(self, mock_urlopen):
         mock_urlopen.side_effect = self.mock_requests_post
         self.client.set_order_attributes(
             amazon_order_reference_id='test',
-            merchant_id='test',
             currency_code='test',
             amount='test',
             seller_order_id='test',
@@ -404,7 +403,10 @@ class AmazonPayClientTest(unittest.TestCase):
             request_payment_authorization='test',
             store_name='test',
             list_order_item_categories=['test'],
-            custom_information='test')
+            custom_information='test',
+            merchant_id='test',
+            mws_auth_token='test')
+        
         parameters = {
             'Action': 'SetOrderAttributes',
             'AmazonOrderReferenceId': 'test',
@@ -416,12 +418,11 @@ class AmazonPayClientTest(unittest.TestCase):
             'OrderAttributes.PaymentServiceProviderAttributes.PaymentServiceProviderOrderId': 'test',
             'OrderAttributes.PlatformId': 'test',
             'OrderAttributes.RequestPaymentAuthorization': 'test',
-            'SellerId': 'test',
             'OrderAttributes.SellerNote': 'test',
             'OrderAttributes.SellerOrderAttributes.SellerOrderId': 'test',
-            'OrderAttributes.SellerOrderAttributes.StoreName': 'test'
-        }
-
+            'OrderAttributes.SellerOrderAttributes.StoreName': 'test',
+            'SellerId': 'test',
+            'MWSAuthToken': 'test'}
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
@@ -498,58 +499,82 @@ class AmazonPayClientTest(unittest.TestCase):
     def test_list_order_reference(self, mock_urlopen):
         mock_urlopen.side_effect = self.mock_requests_post
         self.client.list_order_reference(
-            query_id='TestOrder0001',
-            query_id_type='SellerOrderId',
-            created_time_range_start='2017-05-01',
-            created_time_range_end='2017-07-01',
-            sort_order='Ascending',
+            query_id='test',
+            query_id_type='test',
+            created_time_range_start='test',
+            created_time_range_end='test',
+            sort_order='test',
             page_size=1,
-            order_reference_status_list_filter=['Open','Closed'])
+            merchant_id='test',
+            mws_auth_token='test',
+            order_reference_status_list_filter=['test','test'])
+        
+        if self.client.region in ('na', 'uk', 'gb', 'jp', 'fe',
+                                  'eu', 'de', 'fr', 'it', 'es', 'cy'):
+            payment_domain = None
+        else:
+            raise ValueError("Error. The current region code does not match our records")
+
+
         parameters = {
             'Action': 'ListOrderReference',
-            'QueryId': 'TestOrder0001',
-            'QueryIdType': 'SellerOrderId',
-            'PaymentDomain': 'NA_TEST',
-            'CreatedTimeRange.StartTime': '2017-05-01',
-            'CreatedTimeRange.EndTime': '2017-07-01',
-            'SortOrder': 'Ascending',
+            'QueryId': 'test',
+            'QueryIdType': 'test',
+            'PaymentDomain': payment_domain,
+            'CreatedTimeRange.StartTime': 'test',
+            'CreatedTimeRange.EndTime': 'test',
+            'SortOrder': 'test',
             'PageSize': 1,
-            'OrderReferenceStatusListFilter.OrderReferenceStatus.1': 'Open',
-            'OrderReferenceStatusListFilter.OrderReferenceStatus.2': 'Closed'}
+            'SellerId': 'test',
+            'MWSAuthToken': 'test',
+            'OrderReferenceStatusListFilter.OrderReferenceStatus.1': 'test',
+            'OrderReferenceStatusListFilter.OrderReferenceStatus.2': 'test'}
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
     @patch('requests.post')
     def test_list_order_reference_time_check_error(self, mock_urlopen):
-        mock_urlopen.side_effect = self.mock_requests_post
+        mock_urlopen.side_effect = self.mock_requests_generic_error_post
         self.client.list_order_reference(
-            query_id='TestOrder0001',
-            query_id_type='SellerOrderId',
-            created_time_range_start='2017-05-01',
+            query_id='test',
+            query_id_type='test',
+            created_time_range_start='test',
             created_time_range_end=None,
             sort_order=None,
             page_size=None,
+            merchant_id='test',
+            mws_auth_token='test',
             order_reference_status_list_filter=None)
+
+        if self.client.region in ('na', 'uk', 'gb', 'jp', 'fe',
+                                  'eu', 'de', 'fr', 'it', 'es', 'cy'):
+            payment_domain = None
+        else:
+            raise ValueError("Error. The current region code does not match our records")
          
         parameters = {
             'Action': 'ListOrderReference',
-            'QueryId': 'TestOrder0001',
-            'QueryIdType': 'SellerOrderId',
-            'PaymentDomain': 'NA_TEST',
-            'CreatedTimeRange.StartTime': '2017-05-01'}
+            'QueryId': 'test',
+            'QueryIdType': 'test',
+            'PaymentDomain': payment_domain,
+            'SellerId': 'test',
+            'MWSAuthToken': 'test',
+            'CreatedTimeRange.StartTime': 'test'}
         data_expected = self.request._querystring(parameters)
-        
-        self.assertRaises(Exception)
-
+        self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
         
     @patch('requests.post')
     def test_list_order_reference_by_next_token(self, mock_urlopen):
         mock_urlopen.side_effect = self.mock_requests_post
         self.client.list_order_reference_by_next_token(
-            next_page_token='test')
+            next_page_token='test',
+            merchant_id='test',
+            mws_auth_token='test')
         parameters= {
             'Action': 'ListOrderReferenceByNextToken',
-            'NextPageToken': 'test'}
+            'NextPageToken': 'test',
+            'SellerId': 'test',
+            'MWSAuthToken': 'test'}
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
         

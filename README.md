@@ -184,12 +184,12 @@ GetOrderReferenceDetails (JSON)
 {
   "GetOrderReferenceDetailsResponse": {
     "ResponseMetadata": {
-      "RequestId": "2bf1f693-0f8f-4c11-990a-db59e3ec571d"
+      "RequestId": "2dfh56f693-0asf-4121-430a-db59e3ec571d"
     },
     "GetOrderReferenceDetailsResult": {
       "OrderReferenceDetails": {
         "CreationTimestamp": "2015-03-05T17:56:11.317Z",
-        "AmazonOrderReferenceId": "S01-5835994-2647190",
+        "AmazonOrderReferenceId": "S01-0000000-0000000",
         "OrderTotal": {
           "CurrencyCode": "USD",
           "Amount": "100.00"
@@ -225,16 +225,8 @@ GetOrderReferenceDetails (JSON)
         "ExpirationTimestamp": "2015-09-01T17:56:11.317Z",
         "IdList": {
           "member": [
-            "S01-5835994-2647190-A082288",
-            "S01-5835994-2647190-A044104",
-            "S01-5835994-2647190-A097659",
-            "S01-5835994-2647190-A061272",
-            "S01-5835994-2647190-A037220",
-            "S01-5835994-2647190-A092983",
-            "S01-5835994-2647190-A077012",
-            "S01-5835994-2647190-A065424",
-            "S01-5835994-2647190-A041441",
-            "S01-5835994-2647190-A058669"
+            "S01-0000000-0000000-A000000",
+            "S01-0000000-0000000-A999999"
           ]
         }
       }
@@ -347,6 +339,9 @@ ListOrderReference
 ```python
 # This method returns a list of all orders made with the custom ID tag attached
 # on each order usually the SellerOrderId.
+# For query, you'll want to enter in the tag you wish to search. 
+# For query_type, currently only SellerOrderId is accepted at this time.
+# However, more query types will become available in the future.
 ret = client.list_order_reference(
     query_id="MY_QUERY_ID",
     query_type="MY_QUERY_TYPE")
@@ -365,7 +360,7 @@ Response
                         "LastUpdateTimestamp": "2017-08-10T21:25:38.628Z",
                         "State": "Open"
                     },
-                    "AmazonOrderReferenceId": "S01-4946947-4455988",
+                    "AmazonOrderReferenceId": "S01-0000000-0000000",
                     "CreationTimestamp": "2017-08-10T21:25:10.592Z",
                     "SellerOrderAttributes": {
                         "StoreName": "Test Store Name",
@@ -373,7 +368,7 @@ Response
                         "OrderItemCategories": {
                             "OrderItemCategory": "Antiques"
                         },
-                        "SellerOrderId": "testID10035"
+                        "SellerOrderId": "QUERY_ID"
                     },
                     "OrderTotal": {
                         "CurrencyCode": "USD",
@@ -393,11 +388,52 @@ ListOrderReferenceByNextToken
 ```python
 # This method returns a list of the continued orders from the previous call
 # using a NextPageToken value to render the next page of data if a page_size
-# was used to split the list of orders into multiple pages
+# was used to split the list of orders into multiple pages.
 reply = client.list_order_reference_by_next_token(
     next_page_token="NEXT_PAGE_TOKEN") 
 print(ret.to_json())
 ```
+
+## Show the Entire Payment History of an Order
+
+GetPaymentDetails
+```python
+# This method returns the entire payment history of an order in an easy to 
+# parse format of a list of objects .
+
+reply = client.get_payment_details(amazon_order_reference_id='AMAZON_ORDER_REFERENCE_ID')
+```
+
+Response 
+```python
+[<amazon_pay.payment_response.PaymentResponse object at 0x000000000>, 
+<amazon_pay.payment_response.PaymentResponse object at 0x000000000>, 
+<amazon_pay.payment_response.PaymentResponse object at 0x000000000>]
+```
+# You can convert this data using our to_dict(), to_json(), or to_xml()
+# and then parse through the response of each item. The example below 
+# shows the basic way to parse through these objects. The example below when 
+# paired with the above information will return the corresponding hex
+# object as well as all of the information inside of it. This is to 
+# show what is stored, and how you can read through the data. 
+
+```python
+    for i in range(len(reply)):
+        query = json.loads(reply[i].to_json())
+        if 'GetOrderReferenceDetailsResponse' in query:
+            print(reply[i])
+            print(query['GetOrderReferenceDetailsResponse'])
+        elif 'GetAuthorizationDetailsResponse' in query:
+            print(reply[i])
+            print(query['GetAuthorizationDetailsResponse'])
+        elif 'GetCaptureDetailsResponse' in query:
+            print(reply[i])
+            print(query['GetCaptureDetailsResponse'])
+        elif 'GetRefundDetailsResponse' in query:
+            print(reply[i])
+            print(query['GetRefundDetailsResponse'])
+        else:
+            print("Error")
 
 
 ## API Reference
