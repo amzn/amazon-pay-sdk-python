@@ -248,16 +248,9 @@ GetOrderReferenceDetails (XML)
         <CurrencyCode>USD</CurrencyCode>
       </OrderTotal>
       <IdList>
-        <member>S01-5835994-2647190-A082288</member>
-        <member>S01-5835994-2647190-A044104</member>
-        <member>S01-5835994-2647190-A097659</member>
-        <member>S01-5835994-2647190-A061272</member>
-        <member>S01-5835994-2647190-A037220</member>
-        <member>S01-5835994-2647190-A092983</member>
-        <member>S01-5835994-2647190-A077012</member>
-        <member>S01-5835994-2647190-A065424</member>
-        <member>S01-5835994-2647190-A041441</member>
-        <member>S01-5835994-2647190-A058669</member>
+        <member>S01-0000000-0000000-A000000</member>
+        <member>S01-0000000-0000000-A999999</member>
+
       </IdList>
       <OrderReferenceStatus>
         <LastUpdateTimestamp>2015-03-05T17:57:16.233Z</LastUpdateTimestamp>
@@ -326,7 +319,7 @@ Response
         "LastUpdateTimestamp": "2013-01-01T01:01:01.001Z"
       },
       "SellerOrderAttributes": null,
-      "AmazonOrderReferenceId": "P01-0000000-0000000-000000",
+      "AmazonOrderReferenceId": "P01-0000000-0000000-A000000",
       "ExpirationTimestamp": "2013-01-01T01:01:01.001Z"
     }
   }
@@ -410,13 +403,12 @@ Response
 <amazon_pay.payment_response.PaymentResponse object at 0x000000000>, 
 <amazon_pay.payment_response.PaymentResponse object at 0x000000000>]
 ```
-# You can convert this data using our to_dict(), to_json(), or to_xml()
-# and then parse through the response of each item. The example below 
-# shows the basic way to parse through these objects. The example below when 
-# paired with the above information will return the corresponding hex
-# object as well as all of the information inside of it. This is to 
-# show what is stored, and how you can read through the data. 
-
+You can convert this data using our to_dict(), to_json(), or to_xml()
+and then parse through the response of each item. The example below 
+shows the basic way to parse through these objects. The example below when 
+paired with the above information will return the corresponding hex
+object as well as all of the information inside of it. This is to 
+show what is stored, and how you can read through the data. 
 ```python
     for i in range(len(reply)):
         query = json.loads(reply[i].to_json())
@@ -434,7 +426,7 @@ Response
             print(query['GetRefundDetailsResponse'])
         else:
             print("Error")
-
+```
 
 ## API Reference
 

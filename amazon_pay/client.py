@@ -205,7 +205,33 @@ class AmazonPayClient:
             sandbox=self._sandbox)
         response = lwa_client.get_login_profile(access_token=access_token)
         return response
+    
+    def get_merchant_account_status(
+            self,
+            merchant_id=None,
+            mws_auth_token=None):
+        """ Check the account status of the merchant
+        
+        Parameters
+        ----------
+        merchant_id : string, optional
+            Your merchant ID. If you are a marketplace enter the seller's merchant
+            ID.
 
+        mws_auth_token: string, optional
+            Your marketplace web service auth token. Default: None
+            
+        """
+        parameters = {
+            'Action': 'GetMerchantAccountStatus'
+            }
+        
+        optionals = {
+            'SellerId': merchant_id,
+            'MWSAuthToken': mws_auth_token}
+        
+        return self._operation(params=parameters, options=optionals)
+        
     def create_order_reference_for_id(
             self,
             object_id,

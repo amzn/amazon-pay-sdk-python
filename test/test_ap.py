@@ -13,6 +13,7 @@ from amazon_pay.payment_response import PaymentResponse, PaymentErrorResponse
 from symbol import parameters
 
 
+
 class AmazonPayClientTest(unittest.TestCase):
 
     def setUp(self):
@@ -196,6 +197,19 @@ class AmazonPayClientTest(unittest.TestCase):
         }
         self.assertEqual(mock_urlopen.call_args[1]['headers'], header_expected)
         self.assertTrue(py_valid, True)
+
+    @patch('requests.post')
+    def test_get_merchant_account_status(self, mock_urlopen):
+        mock_urlopen.side_effect = self.mock_requests_post
+        self.client.get_merchant_account_status(
+            merchant_id='test',
+            mws_auth_token='test')
+        parameters = {
+            'Action': 'GetMerchantAccountStatus',
+            'SellerId': 'test',
+            'MWSAuthToken': 'test'}
+        data_expected = self.request._querystring(parameters)
+        self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
     @patch('requests.post')
     def test_create_order_reference_for_id(self, mock_urlopen):
@@ -509,9 +523,14 @@ class AmazonPayClientTest(unittest.TestCase):
             mws_auth_token='test',
             order_reference_status_list_filter=['test','test'])
         
-        if self.client.region in ('na', 'uk', 'gb', 'jp', 'fe',
-                                  'eu', 'de', 'fr', 'it', 'es', 'cy'):
-            payment_domain = None
+        if self.client.region in ('na'):
+            payment_domain = 'NA_USD'
+        elif self.client.region in ('uk', 'gb'):
+            payment_domain = 'EU_GBP'
+        elif self.client.region in ('jp', 'fe'):
+            payment_domain = 'FE_JPY' 
+        elif self.client.region in ('eu', 'de', 'fr', 'it', 'es', 'cy'):
+            payment_domain = 'EU_EUR'
         else:
             raise ValueError("Error. The current region code does not match our records")
 
@@ -546,11 +565,17 @@ class AmazonPayClientTest(unittest.TestCase):
             mws_auth_token='test',
             order_reference_status_list_filter=None)
 
-        if self.client.region in ('na', 'uk', 'gb', 'jp', 'fe',
-                                  'eu', 'de', 'fr', 'it', 'es', 'cy'):
-            payment_domain = None
+        if self.client.region in ('na'):
+            payment_domain = 'NA_USD'
+        elif self.client.region in ('uk', 'gb'):
+            payment_domain = 'EU_GBP'
+        elif self.client.region in ('jp', 'fe'):
+            payment_domain = 'FE_JPY' 
+        elif self.client.region in ('eu', 'de', 'fr', 'it', 'es', 'cy'):
+            payment_domain = 'EU_EUR'
         else:
             raise ValueError("Error. The current region code does not match our records")
+
          
         parameters = {
             'Action': 'ListOrderReference',
