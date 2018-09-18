@@ -1,0 +1,27 @@
+Version 2.5.1 September 2018
+- Add support for SupplementaryData attribute in set_order_reference_details, set_order_attributes and get_order_reference_details.
+- Refactor unit tests.
+
+Version 2.5.0 April 2018
+- Add support for get_merchant_account_status call.
+
+Version 2.3.0 November 2017
+- Add support for set_order_attributes call.
+
+Version 2.2.0 August 2017
+- Add support for list_order_reference and list_order_reference_by_next_token calls.
+
+Version 2.1.0 June 2017
+- Add access_token variable to get_order_reference_details function.
+
+Version 2.0.0 February 2017
+- Rebrand and User-Agent.
+
+Version 1.0.2 - Jan 2017
+- Enable logging.
+
+Version 1.0.1 - August 2016
+- Add support for IPN handling.
+
+Version 1.0.0 - May 2015
+- Initial Release

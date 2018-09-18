@@ -604,7 +604,8 @@ class AmazonPayClient:
             store_name=None,
             custom_information=None,
             merchant_id=None,
-            mws_auth_token=None):
+            mws_auth_token=None,
+            supplementary_data=None):
         """Sets order reference details such as the order total and a
         description for the order.
 
@@ -650,6 +651,9 @@ class AmazonPayClient:
 
         mws_auth_token: string, optional
             Your marketplace web service auth token. Default: None
+
+        supplementary_data: string, optional
+            Only use if instructed to do so by Amazon Pay. JSON string. Default: None
         """
         parameters = {
             'Action': 'SetOrderReferenceDetails',
@@ -662,6 +666,7 @@ class AmazonPayClient:
             'OrderReferenceAttributes.SellerOrderAttributes.SellerOrderId': seller_order_id,
             'OrderReferenceAttributes.SellerOrderAttributes.StoreName': store_name,
             'OrderReferenceAttributes.SellerOrderAttributes.CustomInformation': custom_information,
+            'OrderReferenceAttributes.SellerOrderAttributes.SupplementaryData': supplementary_data,
             'SellerId': merchant_id,
             'MWSAuthToken': mws_auth_token}
         return self._operation(params=parameters, options=optionals)
@@ -681,7 +686,8 @@ class AmazonPayClient:
          list_order_item_categories=None,
          custom_information=None,
          merchant_id=None,
-         mws_auth_token=None):
+         mws_auth_token=None,
+         supplementary_data=None):
         '''
         Return and update the information of an order with missing
         or updated information
@@ -754,6 +760,9 @@ class AmazonPayClient:
             will not be visible on Seller Central. This can only be
             accessed if your back end system supports calling this variable.
             Default: None
+
+        supplementary_data: string, optional
+            Only use if instructed to do so by Amazon Pay. JSON string. Default: None
         '''
 
         parameters = {
@@ -774,6 +783,7 @@ class AmazonPayClient:
             'OrderAttributes.SellerNote': seller_note,
             'OrderAttributes.SellerOrderAttributes.SellerOrderId': seller_order_id,
             'OrderAttributes.SellerOrderAttributes.StoreName': store_name,
+            'OrderAttributes.SellerOrderAttributes.SupplementaryData': supplementary_data,
             'SellerId': merchant_id,
             'MWSAuthToken': mws_auth_token
         }
