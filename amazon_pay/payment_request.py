@@ -124,6 +124,7 @@ class PaymentRequest:
             data=data,
             headers=self._headers,
             verify=True)
+        r.encoding = 'utf-8'
         self._status_code = r.status_code
 
         if self._status_code == 200:

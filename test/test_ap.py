@@ -45,7 +45,7 @@ class AmazonPayClientTest(unittest.TestCase):
                     'headers': {'test': 'test'},
                     'handle_throttle': True})
 
-        self.response = PaymentResponse('<test>test</test>')
+        self.response = PaymentResponse('<test>الفلانية فلا</test>')
         self.supplementary_data = '{"AirlineMetaData" : {"version": 1.0, "airlineCode": "PAX", "flightDate": "2018-03-24T20:29:19.22Z", "departureAirport": "CDG", "destinationAirport": "LUX", "bookedLastTime": -1, "classOfTravel": "F", "passengers": {"numberOfPassengers": 4, "numberOfChildren": 1, "numberOfInfants": 1 }}, "AccommodationMetaData": {"version": 1.0, "startDate": "2018-03-24T20:29:19.22Z", "endDate": "2018-03-24T20:29:19.22Z", "lengthOfStay": 5, "numberOfGuests": 4, "class": "Standard", "starRating": 5, "bookedLastTime": -1 }, "OrderMetaData": {"version": 1.0, "numberOfItems": 3, "type": "Digital" }, "BuyerMetaData": {"version" : 1.0, "isFirstTimeCustomer" : true, "numberOfPastPurchases" : 2, "numberOfDisputedPurchases" : 3, "hasOpenDispute" : true, "riskScore" : 0.75 }}'
 
     def mock_requests_post(self, url, data=None, headers=None, verify=False):
@@ -624,7 +624,6 @@ class AmazonPayClientTest(unittest.TestCase):
         parameters = {
             'Action': 'Authorize',
             'AmazonOrderReferenceId': 'P01-351-461238848937',
-            'TransactionTimeout': '0',
             'AuthorizationReferenceId': 'testAuthId123',
             'AuthorizationAmount.Amount': '1',
             'AuthorizationAmount.CurrencyCode': 'USD',
@@ -781,6 +780,11 @@ class AmazonPayClientTest(unittest.TestCase):
         mock_urlopen.side_effect = self.mock_requests_post
         response = self.client.get_service_status()
         self.assertTrue(json.loads(response.to_json()))
+
+    def test_response_to_json_utf8(self):
+        text = self.response.to_json()
+        utf8_text = '{"test": "الفلانية فلا"}'
+        self.assertEqual(text, utf8_text)
 
     @patch('requests.post')
     def test_response_to_dict(self, mock_urlopen):

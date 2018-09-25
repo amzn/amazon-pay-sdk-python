@@ -1,3 +1,6 @@
+Version 2.5.2 September 2018
+- Bug Fix XML, JSON and Dictionary responses not returning the propper UTF-8 encoding
+
 Version 2.5.1 September 2018
 - Add support for SupplementaryData attribute in set_order_reference_details, set_order_attributes and get_order_reference_details.
 - Refactor unit tests.

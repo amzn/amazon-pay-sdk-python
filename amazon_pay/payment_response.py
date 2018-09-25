@@ -67,7 +67,7 @@ class PaymentResponse:
 
     def to_json(self):
         """Return JSON"""
-        return json.dumps(self._etree_to_dict(self._root))
+        return json.dumps(self._etree_to_dict(self._root), ensure_ascii=False)
 
     def to_dict(self):
         """Return Dictionary"""
