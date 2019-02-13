@@ -9,7 +9,6 @@ import amazon_pay.version as ap_version
 from amazon_pay.payment_request import PaymentRequest
 from fileinput import filename
 
-
 class AmazonPayClient:
 
     logger = logging.getLogger('__amazon_pay_sdk__')
@@ -34,8 +33,9 @@ class AmazonPayClient:
             application_version=None,
             log_enabled=False,
             log_file_name=None,
-            log_level=None):
-    
+            log_level=None
+            ):
+
     
         """
         Parameters
@@ -245,7 +245,8 @@ class AmazonPayClient:
             store_name=None,
             custom_information=None,
             merchant_id=None,
-            mws_auth_token=None):
+            mws_auth_token=None,
+            supplementary_data=None):
         # pylint: disable=too-many-arguments
         """Creates an order reference for the given object.
 
@@ -276,23 +277,28 @@ class AmazonPayClient:
         mws_auth_token: string, optional
             Your marketplace web service auth token. Default: None
 
+        supplementary_data: string, optional
+            Only use if instructed to do so by Amazon Pay. JSON string. Default: None
+
         """
         parameters = {
             'Action': 'CreateOrderReferenceForId',
             'Id': object_id,
             'IdType': object_id_type,
-            'OrderTotal.Amount': order_total,
-            'OrderTotal.CurrencyCode': self.currency_code}
+            'OrderReferenceAttributes.OrderTotal.Amount': order_total,
+            'OrderReferenceAttributes.OrderTotal.CurrencyCode': self.currency_code}
         optionals = {
             'InheritShippingAddress': str(inherit_shipping_address).lower(),
             'ConfirmNow': str(confirm_now).lower(),
-            'PlatformId': platform_id,
-            'SellerNote': seller_note,
-            'SellerOrderId': seller_order_id,
-            'StoreName': store_name,
-            'CustomInformation': custom_information,
+            'OrderReferenceAttributes.PlatformId': platform_id,
+            'OrderReferenceAttributes.SellerNote': seller_note,
+            'OrderReferenceAttributes.SellerOrderAttributes.SellerOrderId': seller_order_id,
+            'OrderReferenceAttributes.SellerOrderAttributes.StoreName': store_name,
+            'OrderReferenceAttributes.SellerOrderAttributes.CustomInformation': custom_information,
             'SellerId': merchant_id,
+            'OrderReferenceAttributes.SupplementaryData': supplementary_data,
             'MWSAuthToken': mws_auth_token}
+
         return self._operation(params=parameters, options=optionals)
 
     def get_billing_agreement_details(
@@ -467,7 +473,8 @@ class AmazonPayClient:
             custom_information=None,
             inherit_shipping_address=True,
             merchant_id=None,
-            mws_auth_token=None):
+            mws_auth_token=None,
+            supplementary_data=None):
         # pylint: disable=too-many-arguments
         """Reserves a specified amount against the payment method(s) stored in
         the billing agreement.
@@ -531,6 +538,9 @@ class AmazonPayClient:
             Specifies whether to inherit the shipping address details from the
             object represented by the Id request parameter. Default: True
 
+        supplementary_data: string, optional
+            Only use if instructed to do so by Amazon Pay. JSON string. Default: None
+
         merchant_id : string, required
             Your merchant ID. If you are a marketplace enter the seller's merchant
             ID.
@@ -555,6 +565,7 @@ class AmazonPayClient:
             'SellerOrderAttributes.SellerOrderId': seller_order_id,
             'SellerOrderAttributes.StoreName': store_name,
             'SellerOrderAttributes.CustomInformation': custom_information,
+            'SellerOrderAttributes.SupplementaryData': supplementary_data,
             'SellerId': merchant_id,
             'MWSAuthToken': mws_auth_token}
         return self._operation(params=parameters, options=optionals)
@@ -847,7 +858,11 @@ class AmazonPayClient:
             self,
             amazon_order_reference_id,
             merchant_id=None,
-            mws_auth_token=None):
+            mws_auth_token=None,
+            success_url=None,
+            failure_url=None,
+            authorization_amount=None,
+            currency_code=None):
         """Confirms that the order reference is free of constraints and all
         required information has been set on the order reference.
 
@@ -862,13 +877,36 @@ class AmazonPayClient:
 
         mws_auth_token: string, optional
             Your marketplace web service auth token. Default: None
+
+        success_url: string, optional
+            Represents the return URL for PSD2 success.
+
+        failure_url: string, optional
+            Represents the return URL for PSD2 failure.
+
+        authorization_amount: string, optional
+            Represents the amount to be authorized.  If blank both it and currency_code will be excluded.
+
+        currency_code: string, optional
+            Currency code for your region.
+            Environment variable: AP_CURRENCY_CODE
+
         """
         parameters = {
             'Action': 'ConfirmOrderReference',
             'AmazonOrderReferenceId': amazon_order_reference_id}
         optionals = {
             'SellerId': merchant_id,
-            'MWSAuthToken': mws_auth_token}
+            'MWSAuthToken': mws_auth_token,
+            'SuccessUrl': success_url,
+            'FailureUrl': failure_url,
+            'AuthorizationAmount.Amount': authorization_amount,
+            'AuthorizationAmount.CurrencyCode': self.currency_code if currency_code is None else currency_code }
+  
+        if authorization_amount == "0" or authorization_amount is None:
+            del optionals['AuthorizationAmount.Amount']
+            del optionals['AuthorizationAmount.CurrencyCode']
+
         return self._operation(params=parameters, options=optionals)
 
     def cancel_order_reference(
@@ -1665,6 +1703,7 @@ class AmazonPayClient:
         """Parses required and optional parameters and passes to the Request
         object.
         """
+
         if options is not None:
             for opt in options.keys():
                 if options[opt] is not None:

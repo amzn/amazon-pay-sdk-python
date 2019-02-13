@@ -12,8 +12,6 @@ from amazon_pay.payment_request import PaymentRequest
 from amazon_pay.payment_response import PaymentResponse, PaymentErrorResponse
 from symbol import parameters
 
-
-
 class AmazonPayClientTest(unittest.TestCase):
 
     def setUp(self):
@@ -33,7 +31,8 @@ class AmazonPayClientTest(unittest.TestCase):
             handle_throttle=False,
             sandbox=True,
             region='na',
-            currency_code='USD')
+            currency_code='USD'
+            )
 
         self.request = PaymentRequest(
             params={'test': 'test'},
@@ -224,6 +223,7 @@ class AmazonPayClientTest(unittest.TestCase):
             platform_id='testPlatformId123',
             seller_note='testSellerNote2145',
             seller_order_id='testSellerOrderId21434',
+            supplementary_data=self.supplementary_data,
             store_name='testStoreName1234',
             custom_information='testCustomInfo12435',
             merchant_id='A2AMR0DUGHIUEHQ',
@@ -232,17 +232,19 @@ class AmazonPayClientTest(unittest.TestCase):
             'Action': 'CreateOrderReferenceForId',
             'Id': 'B01-462347-4762387',
             'IdType': 'BillingAgreement',
-            'OrderTotal.Amount': '1',
-            'OrderTotal.CurrencyCode': 'USD',
+            'OrderReferenceAttributes.OrderTotal.Amount': '1',
+            'OrderReferenceAttributes.OrderTotal.CurrencyCode': 'USD',
             'InheritShippingAddress': 'false',
             'ConfirmNow': 'true',
-            'PlatformId': 'testPlatformId123',
-            'SellerNote': 'testSellerNote2145',
-            'SellerOrderId': 'testSellerOrderId21434',
-            'StoreName': 'testStoreName1234',
-            'CustomInformation': 'testCustomInfo12435',
+            'OrderReferenceAttributes.PlatformId': 'testPlatformId123',
+            'OrderReferenceAttributes.SellerNote': 'testSellerNote2145',
+            'OrderReferenceAttributes.SellerOrderAttributes.SellerOrderId': 'testSellerOrderId21434',
+            'OrderReferenceAttributes.SupplementaryData': self.supplementary_data,
+            'OrderReferenceAttributes.SellerOrderAttributes.StoreName': 'testStoreName1234',
+            'OrderReferenceAttributes.SellerOrderAttributes.CustomInformation': 'testCustomInfo12435',
             'SellerId': 'A2AMR0DUGHIUEHQ',
             'MWSAuthToken': 'amzn.mws.d6ac8f2d-6a5f-b06476237468923749823'}
+
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
@@ -334,6 +336,7 @@ class AmazonPayClientTest(unittest.TestCase):
             seller_order_id='testSellerOrderId4237',
             store_name='testStoreName842398',
             custom_information='testCustomInfo623',
+            supplementary_data=self.supplementary_data,
             inherit_shipping_address=False,
             merchant_id='A2AMR0FDYHGHJD',
             mws_auth_token='amzn.mws.d6ac8f2d-463286-fhegsdj46238')
@@ -353,6 +356,7 @@ class AmazonPayClientTest(unittest.TestCase):
             'SellerOrderAttributes.SellerOrderId': 'testSellerOrderId4237',
             'SellerOrderAttributes.StoreName': 'testStoreName842398',
             'SellerOrderAttributes.CustomInformation': 'testCustomInfo623',
+            'SellerOrderAttributes.SupplementaryData': self.supplementary_data,
             'SellerId': 'A2AMR0FDYHGHJD',
             'MWSAuthToken': 'amzn.mws.d6ac8f2d-463286-fhegsdj46238'}
         data_expected = self.request._querystring(parameters)
@@ -461,7 +465,8 @@ class AmazonPayClientTest(unittest.TestCase):
             'AddressConsentToken': 'ADUHIQILPLP',
             'AccessToken': 'AHJJOKJJHNJNJK',
             'SellerId': 'ADGJUHJWKJKJ',
-            'MWSAuthToken': 'amzn.mws.d8f2d-6a5f-b427489234798'}
+            'MWSAuthToken': 'amzn.mws.d8f2d-6a5f-b427489234798'
+            }
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
@@ -471,13 +476,26 @@ class AmazonPayClientTest(unittest.TestCase):
         self.client.confirm_order_reference(
             amazon_order_reference_id='P01-476238-47263849238',
             merchant_id='AHDGJHDJKFJIIIJ',
-            mws_auth_token='amzn.mws.d8f2d-6a5f-b42rwe74237489')
+            mws_auth_token='amzn.mws.d8f2d-6a5f-b42rwe74237489',
+            success_url='https://www.success.com',
+            failure_url='https://www.failure.com',
+            authorization_amount='5',
+            currency_code='USD'
+        )
+
         parameters = {
             'Action': 'ConfirmOrderReference',
             'AmazonOrderReferenceId': 'P01-476238-47263849238',
             'SellerId': 'AHDGJHDJKFJIIIJ',
-            'MWSAuthToken': 'amzn.mws.d8f2d-6a5f-b42rwe74237489'}
+            'MWSAuthToken': 'amzn.mws.d8f2d-6a5f-b42rwe74237489',
+            'SuccessUrl': 'https://www.success.com',
+            'FailureUrl': 'https://www.failure.com',
+            'AuthorizationAmount.Amount': '5',
+            'AuthorizationAmount.CurrencyCode': 'USD'
+        }
+        
         data_expected = self.request._querystring(parameters)
+
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
     @patch('requests.post')

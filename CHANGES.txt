@@ -1,3 +1,7 @@
+2.6.0 - February 2019
+- Added new supplementary_data attribute for AuthorizeOnBillingAgreement and CreateOrderReferenceForId.
+- Added additional attributes (success_url, failure_url, authorization_amount, currency_code) to ConfirmOrderReference.  For usage instructions, please consult the Amazon Pay Strong Customer Authentication (SCA) Upgrade Integration GuideAmazon Pay Strong Customer Authentication (SCA) Upgrade Integration Guide   
+
 Version 2.5.2 September 2018
 - Bug Fix XML, JSON and Dictionary responses not returning the propper UTF-8 encoding
 
