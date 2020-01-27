@@ -12,6 +12,7 @@ from amazon_pay.payment_request import PaymentRequest
 from amazon_pay.payment_response import PaymentResponse, PaymentErrorResponse
 from symbol import parameters
 
+
 class AmazonPayClientTest(unittest.TestCase):
 
     def setUp(self):
@@ -32,7 +33,7 @@ class AmazonPayClientTest(unittest.TestCase):
             sandbox=True,
             region='na',
             currency_code='USD'
-            )
+        )
 
         self.request = PaymentRequest(
             params={'test': 'test'},
@@ -94,7 +95,7 @@ class AmazonPayClientTest(unittest.TestCase):
         self.assertEqual(
             self.client._mws_endpoint,
             'https://mws.amazonservices.com/OffAmazonPayments_Sandbox/2013-01-01')
-        
+
     def test_sanitize_response_data(self):
         current_file_dir = os.path.dirname(__file__)
         test_file_path = os.path.join(current_file_dir, "log.txt")
@@ -184,15 +185,15 @@ class AmazonPayClientTest(unittest.TestCase):
         self.client.get_service_status()
         if sys.version_info[0] == 3 and sys.version_info[1] >= 2:
             py_valid = True
-        
+
         header_expected = {
             'Content-Type': 'application/x-www-form-urlencoded',
-            "User-Agent":'amazon-pay-sdk-python/{0} ({1}Python/{2}; {3}/{4})'.format(
-            str(ap_version.versions['application_version']),
-            (''),
-            py_version,
-            str(platform.system()),
-            str(platform.release())
+            "User-Agent": 'amazon-pay-sdk-python/{0} ({1}Python/{2}; {3}/{4})'.format(
+                str(ap_version.versions['application_version']),
+                (''),
+                py_version,
+                str(platform.system()),
+                str(platform.release())
             )
         }
         self.assertEqual(mock_urlopen.call_args[1]['headers'], header_expected)
@@ -408,7 +409,7 @@ class AmazonPayClientTest(unittest.TestCase):
             'OrderReferenceAttributes.SellerOrderAttributes.SupplementaryData': self.supplementary_data}
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
-        
+
     @patch('requests.post')
     def test_set_order_attributes(self, mock_urlopen):
         mock_urlopen.side_effect = self.mock_requests_post
@@ -428,7 +429,7 @@ class AmazonPayClientTest(unittest.TestCase):
             merchant_id='AGHJHHJKJHL',
             mws_auth_token='amzn.mws.d8f2d-6a5f-b06a4628',
             supplementary_data=self.supplementary_data)
-        
+
         parameters = {
             'Action': 'SetOrderAttributes',
             'AmazonOrderReferenceId': 'P01-1234567-4827348237',
@@ -449,7 +450,6 @@ class AmazonPayClientTest(unittest.TestCase):
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
-
     @patch('requests.post')
     def test_get_order_reference_details(self, mock_urlopen):
         mock_urlopen.side_effect = self.mock_requests_post
@@ -466,7 +466,7 @@ class AmazonPayClientTest(unittest.TestCase):
             'AccessToken': 'AHJJOKJJHNJNJK',
             'SellerId': 'ADGJUHJWKJKJ',
             'MWSAuthToken': 'amzn.mws.d8f2d-6a5f-b427489234798'
-            }
+        }
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
@@ -493,7 +493,7 @@ class AmazonPayClientTest(unittest.TestCase):
             'AuthorizationAmount.Amount': '5',
             'AuthorizationAmount.CurrencyCode': 'USD'
         }
-        
+
         data_expected = self.request._querystring(parameters)
 
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
@@ -545,18 +545,18 @@ class AmazonPayClientTest(unittest.TestCase):
             merchant_id='AFHRWKJEKJLJKL',
             mws_auth_token='amzn.mws.d8f2d-6a5f-b42ryurueruio3uio87',
             order_reference_status_list_filter=['test1', 'test2'])
-        
+
         if self.client.region in ('na'):
             payment_domain = 'NA_USD'
         elif self.client.region in ('uk', 'gb'):
             payment_domain = 'EU_GBP'
         elif self.client.region in ('jp', 'fe'):
-            payment_domain = 'FE_JPY' 
+            payment_domain = 'FE_JPY'
         elif self.client.region in ('eu', 'de', 'fr', 'it', 'es', 'cy'):
             payment_domain = 'EU_EUR'
         else:
-            raise ValueError("Error. The current region code does not match our records")
-
+            raise ValueError(
+                "Error. The current region code does not match our records")
 
         parameters = {
             'Action': 'ListOrderReference',
@@ -593,13 +593,13 @@ class AmazonPayClientTest(unittest.TestCase):
         elif self.client.region in ('uk', 'gb'):
             payment_domain = 'EU_GBP'
         elif self.client.region in ('jp', 'fe'):
-            payment_domain = 'FE_JPY' 
+            payment_domain = 'FE_JPY'
         elif self.client.region in ('eu', 'de', 'fr', 'it', 'es', 'cy'):
             payment_domain = 'EU_EUR'
         else:
-            raise ValueError("Error. The current region code does not match our records")
+            raise ValueError(
+                "Error. The current region code does not match our records")
 
-         
         parameters = {
             'Action': 'ListOrderReference',
             'QueryId': 'testSellerOrderId12444',
@@ -610,7 +610,7 @@ class AmazonPayClientTest(unittest.TestCase):
             'CreatedTimeRange.StartTime': 'testStart'}
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
-        
+
     @patch('requests.post')
     def test_list_order_reference_by_next_token(self, mock_urlopen):
         mock_urlopen.side_effect = self.mock_requests_post
@@ -618,14 +618,14 @@ class AmazonPayClientTest(unittest.TestCase):
             next_page_token='yrtewyy4823749329482394023940',
             merchant_id='AHFUHWJELWJELEJW',
             mws_auth_token='amzn.mws.d8f2d-6a5f-b42r23436248623748')
-        parameters= {
+        parameters = {
             'Action': 'ListOrderReferenceByNextToken',
             'NextPageToken': 'yrtewyy4823749329482394023940',
             'SellerId': 'AHFUHWJELWJELEJW',
             'MWSAuthToken': 'amzn.mws.d8f2d-6a5f-b42r23436248623748'}
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
-        
+
     @patch('requests.post')
     def test_authorize(self, mock_urlopen):
         mock_urlopen.side_effect = self.mock_requests_post

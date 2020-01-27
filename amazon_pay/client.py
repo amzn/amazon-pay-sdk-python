@@ -9,6 +9,7 @@ import amazon_pay.version as ap_version
 from amazon_pay.payment_request import PaymentRequest
 from fileinput import filename
 
+
 class AmazonPayClient:
 
     logger = logging.getLogger('__amazon_pay_sdk__')
@@ -34,9 +35,7 @@ class AmazonPayClient:
             log_enabled=False,
             log_file_name=None,
             log_level=None
-            ):
-
-    
+    ):
         """
         Parameters
         ----------
@@ -143,22 +142,23 @@ class AmazonPayClient:
                     ch = logging.StreamHandler(sys.stdout)
                     self.logger.addHandler(ch)
                     ch.setLevel(numeric_level)
-        
+
         app_name_and_ver = ''
-        
+
         if application_name not in ['', None]:
             app_name_and_ver = app_name_and_ver + str(application_name)
             if application_version not in ['', None]:
-                app_name_and_ver = app_name_and_ver + '/' + str(application_version)
+                app_name_and_ver = app_name_and_ver + \
+                    '/' + str(application_version)
 
         elif application_version not in ['', None]:
             app_name_and_ver = app_name_and_ver + str(application_version)
-        
+
         if ((application_name not in ['', None]) | (application_version not in ['', None])):
             app_name_and_ver = app_name_and_ver + '; '
 
         current_py_ver = ".".join(map(str, sys.version_info[:3]))
-        
+
         self._user_agent = 'amazon-pay-sdk-python/{0} ({1}Python/{2}; {3}/{4})'.format(
             str(self._application_library_version),
             str(app_name_and_ver),
@@ -166,7 +166,7 @@ class AmazonPayClient:
             str(platform.system()),
             str(platform.release())
         )
-        
+
         self.logger.debug('user agent: %s', self._user_agent)
 
         self._headers = {
@@ -205,13 +205,13 @@ class AmazonPayClient:
             sandbox=self._sandbox)
         response = lwa_client.get_login_profile(access_token=access_token)
         return response
-    
+
     def get_merchant_account_status(
             self,
             merchant_id=None,
             mws_auth_token=None):
         """ Check the account status of the merchant
-        
+
         Parameters
         ----------
         merchant_id : string, optional
@@ -220,18 +220,18 @@ class AmazonPayClient:
 
         mws_auth_token: string, optional
             Your marketplace web service auth token. Default: None
-            
+
         """
         parameters = {
             'Action': 'GetMerchantAccountStatus'
-            }
-        
+        }
+
         optionals = {
             'SellerId': merchant_id,
             'MWSAuthToken': mws_auth_token}
-        
+
         return self._operation(params=parameters, options=optionals)
-        
+
     def create_order_reference_for_id(
             self,
             object_id,
@@ -683,22 +683,22 @@ class AmazonPayClient:
         return self._operation(params=parameters, options=optionals)
 
     def set_order_attributes(
-         self,
-         amazon_order_reference_id,
-         currency_code=None,
-         amount=None,
-         seller_order_id=None,
-         payment_service_provider_id=None,
-         payment_service_provider_order_id=None,
-         platform_id=None,
-         seller_note=None,
-         request_payment_authorization=None,
-         store_name=None,
-         list_order_item_categories=None,
-         custom_information=None,
-         merchant_id=None,
-         mws_auth_token=None,
-         supplementary_data=None):
+            self,
+            amazon_order_reference_id,
+            currency_code=None,
+            amount=None,
+            seller_order_id=None,
+            payment_service_provider_id=None,
+            payment_service_provider_order_id=None,
+            platform_id=None,
+            seller_note=None,
+            request_payment_authorization=None,
+            store_name=None,
+            list_order_item_categories=None,
+            custom_information=None,
+            merchant_id=None,
+            mws_auth_token=None,
+            supplementary_data=None):
         '''
         Return and update the information of an order with missing
         or updated information
@@ -806,7 +806,6 @@ class AmazonPayClient:
 
         return self._operation(params=parameters, options=optionals)
 
-
     def get_order_reference_details(
             self,
             amazon_order_reference_id,
@@ -823,7 +822,7 @@ class AmazonPayClient:
             The order reference identifier. This value is retrieved from the
             amazon pay Button widget after the buyer has successfully authenticated
             with Amazon.
-                
+
         access_token : string, optional
             The access token. This value is retrieved from the
             amazon pay Button widget after the buyer has successfully authenticated
@@ -901,8 +900,8 @@ class AmazonPayClient:
             'SuccessUrl': success_url,
             'FailureUrl': failure_url,
             'AuthorizationAmount.Amount': authorization_amount,
-            'AuthorizationAmount.CurrencyCode': self.currency_code if currency_code is None else currency_code }
-  
+            'AuthorizationAmount.CurrencyCode': self.currency_code if currency_code is None else currency_code}
+
         if authorization_amount == "0" or authorization_amount is None:
             del optionals['AuthorizationAmount.Amount']
             del optionals['AuthorizationAmount.CurrencyCode']
@@ -988,7 +987,6 @@ class AmazonPayClient:
             order_reference_status_list_filter=None,
             merchant_id=None,
             mws_auth_token=None):
-
         """
         Allows the search of any Amazon Pay order made using secondary
         seller order IDs generated manually, a solution provider, or a custom
@@ -1004,7 +1002,7 @@ class AmazonPayClient:
             The type of query the id is referencing.
             Note: At this time, you can only use the query type (SellerOrderId).
             More options will be available in the future. Default: SellerOrderId
-        
+
         payment_domain: string, optional
             The region and currency that will be set to authorize and collect
             payments from your customers. You can leave this blank for the 
@@ -1048,9 +1046,9 @@ class AmazonPayClient:
             of the orders on file. You can search for any valid status for orders
             on file. Filters MUST be written out in English.
             Example: "Open", "Closed", "Suspended", "Canceled"
-            Default: None       
+            Default: None
         """
-        
+
         if self.region is not None:
             region_code = self.region.lower()
             if region_code == 'na':
@@ -1058,18 +1056,19 @@ class AmazonPayClient:
             elif region_code in ('uk', 'gb'):
                 payment_domain = 'EU_GBP'
             elif region_code in ('jp', 'fe'):
-                payment_domain = 'FE_JPY' 
+                payment_domain = 'FE_JPY'
             elif region_code in ('eu', 'de', 'fr', 'it', 'es', 'cy'):
                 payment_domain = 'EU_EUR'
             else:
-                raise ValueError("Error. The current region code does not match our records")
+                raise ValueError(
+                    "Error. The current region code does not match our records")
 
         parameters = {
             'Action': 'ListOrderReference',
             'QueryId': query_id,
             'QueryIdType': query_id_type,
             'PaymentDomain': payment_domain
-        }            
+        }
         optionals = {
             'CreatedTimeRange.StartTime': created_time_range_start,
             'CreatedTimeRange.EndTime': created_time_range_end,
@@ -1120,7 +1119,6 @@ class AmazonPayClient:
             amazon_order_reference_id,
             merchant_id=None,
             mws_auth_token=None):
-
         '''
         This is a convenience function that will return every authorization, 
         charge, and refund call of an Amazon Pay order ID.
@@ -1176,7 +1174,8 @@ class AmazonPayClient:
                 answer.append(response)
                 queryID = json.loads(response.to_json())
                 chargeID = queryID['GetAuthorizationDetailsResponse']\
-                    ['GetAuthorizationDetailsResult']['AuthorizationDetails']['IdList']
+                    ['GetAuthorizationDetailsResult'][
+                        'AuthorizationDetails']['IdList']
 
                 if chargeID is not None:
                     chargeID = chargeID['member']
@@ -1194,7 +1193,7 @@ class AmazonPayClient:
                         if type(refundID['member']) is not list:
                             refundID = [refundID['member']]
                         else:
-                            refundID = refundID['member'] 
+                            refundID = refundID['member']
 
                         for id in refundID:
                             parameters = {
@@ -1721,12 +1720,12 @@ class AmazonPayClient:
 
         request.send_post()
         return request.response
- 
+
     def _enumerate(
-        self,
-        category,
-        filter_types,
-        optionals):
+            self,
+            category,
+            filter_types,
+            optionals):
 
         def enumerate_param(param, values):
             """
@@ -1758,7 +1757,7 @@ class AmazonPayClient:
             optionals.update(enumerate_param(category, filter_types))
         else:
             if ',' in filter_types:
-                filter_types = filter_types.replace(' ','')
+                filter_types = filter_types.replace(' ', '')
                 filter_types = filter_types.split(',')
                 optionals.update(enumerate_param(category, filter_types))
             else:
