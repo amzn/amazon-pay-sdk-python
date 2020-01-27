@@ -4,9 +4,14 @@ The official Amazon Pay Python SDK.
 
 ## Requirements
 
-Python >= 3.2<br/>
-pyOpenSSL >= 0.11<br/>
-Requests >= 2.6.0<br/>
+- Python >= 3.2<br/>
+
+Install dependencies using requirements.txt
+
+```shell
+pip install -r requirements.txt
+```
+
 
 ## Documentation
 

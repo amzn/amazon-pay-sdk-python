@@ -115,9 +115,9 @@ class PaymentRequest:
     def _request(self, retry_time):
         time.sleep(retry_time)
         data = self._querystring(self._params)
-        
-        self.logger.debug('Request Header: %s', 
-            self._sanitize_request_data(str(self._headers)))
+
+        self.logger.debug('Request Header: %s',
+                          self._sanitize_request_data(str(self._headers)))
 
         r = requests.post(
             url=self._mws_endpoint,
@@ -131,8 +131,8 @@ class PaymentRequest:
             self.success = True
             self._should_throttle = False
             self.response = PaymentResponse(r.text)
-            self.logger.debug('Response: %s', 
-                self._sanitize_response_data(r.text))
+            self.logger.debug('Response: %s',
+                              self._sanitize_response_data(r.text))
         elif (self._status_code == 500 or self._status_code ==
               503) and self.handle_throttle:
             self._should_throttle = True
@@ -140,8 +140,8 @@ class PaymentRequest:
                 '<error>{}</error>'.format(r.status_code))
         else:
             self.response = PaymentErrorResponse(r.text)
-            self.logger.debug('Response: %s', 
-                self._sanitize_response_data(r.text))
+            self.logger.debug('Response: %s',
+                              self._sanitize_response_data(r.text))
 
     def send_post(self):
         """Call request to send to MWS endpoint and handle throttle if set."""
@@ -152,7 +152,7 @@ class PaymentRequest:
                     break
         else:
             self._request(0)
-            
+
     def _sanitize_request_data(self, text):
         editText = text
         patterns = []
@@ -161,24 +161,27 @@ class PaymentRequest:
         patterns.append(r'(?s)(SellerCaptureNote).*(&)')
         patterns.append(r'(?s)(SellerRefundNote).*(&)')
         replacement = r'\1 REMOVED \2'
-    
+
         for pattern in patterns:
             editText = re.sub(pattern, replacement, editText)
         return editText
-    
+
     def _sanitize_response_data(self, text):
         editText = text
         patterns = []
         patterns.append(r'(?s)(<Buyer>).*(</Buyer>)')
-        patterns.append(r'(?s)(<PhysicalDestination>).*(</PhysicalDestination>)')
+        patterns.append(
+            r'(?s)(<PhysicalDestination>).*(</PhysicalDestination>)')
         patterns.append(r'(?s)(<BillingAddress>).*(<\/BillingAddress>)')
         patterns.append(r'(?s)(<SellerNote>).*(<\/SellerNote>)')
-        patterns.append(r'(?s)(<AuthorizationBillingAddress>).*(<\/AuthorizationBillingAddress>)')
-        patterns.append(r'(?s)(<SellerAuthorizationNote>).*(<\/SellerAuthorizationNote>)')
+        patterns.append(
+            r'(?s)(<AuthorizationBillingAddress>).*(<\/AuthorizationBillingAddress>)')
+        patterns.append(
+            r'(?s)(<SellerAuthorizationNote>).*(<\/SellerAuthorizationNote>)')
         patterns.append(r'(?s)(<SellerCaptureNote>).*(<\/SellerCaptureNote>)')
         patterns.append(r'(?s)(<SellerRefundNote>).*(<\/SellerRefundNote>)')
         replacement = r'\1 REMOVED \2'
-    
+
         for pattern in patterns:
             editText = re.sub(pattern, replacement, editText)
         return editText
