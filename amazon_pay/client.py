@@ -33,9 +33,7 @@ class AmazonPayClient:
             application_version=None,
             log_enabled=False,
             log_file_name=None,
-            log_level=None
-            ):
-
+            log_level=None):
     
         """
         Parameters
@@ -862,7 +860,8 @@ class AmazonPayClient:
             success_url=None,
             failure_url=None,
             authorization_amount=None,
-            currency_code=None):
+            currency_code=None,
+            expect_immediate_authorization=None):
         """Confirms that the order reference is free of constraints and all
         required information has been set on the order reference.
 
@@ -879,10 +878,10 @@ class AmazonPayClient:
             Your marketplace web service auth token. Default: None
 
         success_url: string, optional
-            Represents the return URL for PSD2 success.
+            Represents the return URL for SCA success.
 
         failure_url: string, optional
-            Represents the return URL for PSD2 failure.
+            Represents the return URL for SCA failure.
 
         authorization_amount: string, optional
             Represents the amount to be authorized.  If blank both it and currency_code will be excluded.
@@ -890,6 +889,9 @@ class AmazonPayClient:
         currency_code: string, optional
             Currency code for your region.
             Environment variable: AP_CURRENCY_CODE
+
+        expect_immediate_authorization: boolean, optional
+            If this value is set to true, the ORO will auto-close in case no authorize is triggered within 60 minutes after the confirm. Default: None
 
         """
         parameters = {
@@ -901,7 +903,8 @@ class AmazonPayClient:
             'SuccessUrl': success_url,
             'FailureUrl': failure_url,
             'AuthorizationAmount.Amount': authorization_amount,
-            'AuthorizationAmount.CurrencyCode': self.currency_code if currency_code is None else currency_code }
+            'AuthorizationAmount.CurrencyCode': self.currency_code if currency_code is None else currency_code,
+            'ExpectImmediateAuthorization': str(expect_immediate_authorization).lower() if expect_immediate_authorization is not None else None}
   
         if authorization_amount == "0" or authorization_amount is None:
             del optionals['AuthorizationAmount.Amount']

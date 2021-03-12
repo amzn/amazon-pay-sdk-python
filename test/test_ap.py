@@ -31,8 +31,7 @@ class AmazonPayClientTest(unittest.TestCase):
             handle_throttle=False,
             sandbox=True,
             region='na',
-            currency_code='USD'
-            )
+            currency_code='USD')
 
         self.request = PaymentRequest(
             params={'test': 'test'},
@@ -465,8 +464,7 @@ class AmazonPayClientTest(unittest.TestCase):
             'AddressConsentToken': 'ADUHIQILPLP',
             'AccessToken': 'AHJJOKJJHNJNJK',
             'SellerId': 'ADGJUHJWKJKJ',
-            'MWSAuthToken': 'amzn.mws.d8f2d-6a5f-b427489234798'
-            }
+            'MWSAuthToken': 'amzn.mws.d8f2d-6a5f-b427489234798'}
         data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
@@ -495,7 +493,37 @@ class AmazonPayClientTest(unittest.TestCase):
         }
         
         data_expected = self.request._querystring(parameters)
+        self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
+    @patch('requests.post')
+    def test_confirm_order_reference_with_expect_immediate_authorization_as_true(self, mock_urlopen):
+        mock_urlopen.side_effect = self.mock_requests_post
+        self.client.confirm_order_reference(
+            amazon_order_reference_id='P02-6009038-6480465',
+            merchant_id='AWBW6G04XFUTG',
+            expect_immediate_authorization=True)
+        parameters = {
+            'Action': 'ConfirmOrderReference',
+            'AmazonOrderReferenceId': 'P02-6009038-6480465',
+            'SellerId': 'AWBW6G04XFUTG',
+            'ExpectImmediateAuthorization': 'true'}
+        data_expected = self.request._querystring(parameters)
+        # print(data_expected)
+        self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
+
+    @patch('requests.post')
+    def test_confirm_order_reference_with_expect_immediate_authorization_as_false(self, mock_urlopen):
+        mock_urlopen.side_effect = self.mock_requests_post
+        self.client.confirm_order_reference(
+            amazon_order_reference_id='P02-0736942-3399325',
+            merchant_id='AWBW6G04XFUTG',
+            expect_immediate_authorization=False)
+        parameters = {
+            'Action': 'ConfirmOrderReference',
+            'AmazonOrderReferenceId': 'P02-0736942-3399325',
+            'SellerId': 'AWBW6G04XFUTG',
+            'ExpectImmediateAuthorization': 'false'}
+        data_expected = self.request._querystring(parameters)
         self.assertEqual(mock_urlopen.call_args[1]['data'], data_expected)
 
     @patch('requests.post')
