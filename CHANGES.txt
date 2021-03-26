@@ -1,3 +1,6 @@
+Version 2.7.1 - March 2021
+- Fixed security risk - Buyer Access token is passed as HTTP header instead of query parameter in URL for get_login_profile API
+
 Version 2.7.0 - March 2021
 - Add new field in ConfirmOrderReference call: expect_immediate_authorization. If this value is set to true, the ORO will auto-close in case no authorize is triggered within 60 minutes after the confirm. Default: None
 

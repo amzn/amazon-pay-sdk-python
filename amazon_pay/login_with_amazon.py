@@ -35,8 +35,8 @@ class LoginWithAmazon:
         """Get profile associated with LWA user."""
         token_info = requests.get(
             url='{}/auth/o2/tokeninfo'.format(self._endpoint),
-            headers=None,
-            params={'access_token': access_token},
+            headers={'x-amz-access-token': access_token},
+            params=None,
             verify=True)
 
         token_decoded = token_info.json()
@@ -52,7 +52,7 @@ class LoginWithAmazon:
 
         profile = requests.get(
             url='{}/user/profile'.format(self._endpoint),
-            headers={'Authorization': 'bearer {}'.format(access_token)},
+            headers={'x-amz-access-token': access_token},
             params=None,
             verify=True)
 
