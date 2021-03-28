@@ -1,6 +1,7 @@
 *.pyc
 *.pyo
 *.class
+*.egg-info
 *~
 *#
 /doc/generated/*
