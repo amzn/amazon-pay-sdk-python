@@ -1239,7 +1239,7 @@ class AmazonPayClient:
 
         seller_authorization_note : string, optional
             A description for the transaction that is displayed in emails to
-            the buyer. Maximum: 225 characters.
+            the buyer. Maximum: 255 characters.
 
         transaction_timeout : unsigned integer, optional
             The number of minutes after which the authorization will
