@@ -126,6 +126,7 @@ class PaymentRequest:
             verify=True)
         r.encoding = 'utf-8'
         self._status_code = r.status_code
+        r.encoding = r.apparent_encoding	# for multibyte string
 
         if self._status_code == 200:
             self.success = True
