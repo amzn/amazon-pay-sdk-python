@@ -1,4 +1,5 @@
-> **Important:** This SDK has been deprecated. Amazon Pay will continue to support this version but it will not be updated with new features. New integrations should refer this [documentation](https://developer.amazon.com/docs/amazon-pay/intro.html) for more details.
+> **Important:** This SDK has been deprecated and no longer maintained. No further updates or security patches will be
+  provided. New integrations should refer this [documentation](https://developer.amazon.com/docs/amazon-pay/intro.html) for more details.
 
 ## Synopsis
 
